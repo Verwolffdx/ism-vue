@@ -1,4 +1,4 @@
-# vue3-smkd-test-1
+# ism-vue
 
 ## Project setup
 ```
