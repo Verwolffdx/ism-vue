@@ -3,7 +3,7 @@
         <li>
             <div :class="{ li_folder: isFolder }" @click="toggle"></div>
             <input type="checkbox" :id="item.id" @change="$emit('addDivision', item)">
-            <label for="checkbox" @click="toggle">{{ item.name }}</label>
+            <label for="checkbox" @click="toggle">{{ item.division_name }}</label>
             <!-- <div :class="{ bold: isFolder }">
                 {{ item.name }}
                 <span v-if="isFolder">[{{ isOpen ? '-' : '+' }}]</span>
@@ -93,5 +93,9 @@ export default {
     left: -1em;
     top: 0.9em;
     position: relative;
+}
+
+label {
+    margin-left: 5px;
 }
 </style>

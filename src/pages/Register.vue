@@ -106,6 +106,7 @@ export default {
       roles: ["user", "admin"],
       role: ["user"],
       // tree: [],
+      fetchDivisions: [],
       divisionsArray: [],
       divisionTreeData: [
         {
@@ -138,10 +139,10 @@ export default {
   methods: {
     addDivision(item) {
       if (this.divisionsArray.includes(item.id)) {
-        this.divisionsArray = this.divisionsArray.filter(e => e !== item.id)
+        this.divisionsArray = this.divisionsArray.filter(e => e !== item.division_id)
       }
       else
-        this.divisionsArray.push(item.id)
+        this.divisionsArray.push(item.division_id)
     },
     reset() {
       this.successful = false

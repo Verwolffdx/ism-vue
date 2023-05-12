@@ -1,6 +1,6 @@
 <template>
     <div>
-        <ul id="demo" v-for="item in divisions.children" >
+        <ul id="demo" v-for="item in divisionsJSON.children" >
             <!-- <input type="checkbox" id="checkbox" @input="$emit('addDivision', item.id)">
             <label for="checkbox" :class="{ bold: isFolder }" @click="toggle">{{ item.name }}</label> -->
             <div-tree-item class="hierarchy_item" :item="item" @addDivision=addDivision></div-tree-item>
@@ -10,6 +10,8 @@
 
 <script>
 import DivTreeItem from '@/components/UI/DivTreeItem'
+import axios from 'axios'
+import authHeader from '@/services/auth-header';
 
 export default {
     name: "divisions-tree",
@@ -41,8 +43,14 @@ export default {
                     },
 
                 ]
+            },
+            divisionsJSON: {
+                children: []
             }
         }
+    },
+    mounted() {
+        this.getDivisions()
     },
     methods: {
         toggle(item) {
@@ -51,7 +59,21 @@ export default {
         addDivision(item, event) {
             this.$emit('addDivision', item)
             // console.log(event)
-        }
+        },
+        async getDivisions() {
+            try {
+                const response = await axios.get('http://localhost:8080/api/v2/smk/divisions', { headers: authHeader() })
+                if (response.status === 200) {
+                  this.divisionsJSON.children = response.data
+                }
+            } catch (e) {
+                alert(e)
+                console.log(e)
+
+            } finally {
+               
+            }
+        },
     // },
     // watch: {
     //     DivisionsArray: function (arr) {
