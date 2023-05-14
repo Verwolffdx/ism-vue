@@ -8,6 +8,10 @@
             </div>
             <div class="createArea">
                 <span class="createTitle">Создать документ</span>
+                <div class="field">
+                    <input type="file" ref="file">
+                    <my-button @click="sendFileToParse">Загрузить файл</my-button>
+                </div>
                 <hr>
 
                 <div class="fields">
@@ -30,14 +34,10 @@
                     <hr>
                     <span class="input_title">Содержание</span>
                     <div v-for="content in document.content">
-                        <document-input 
-                            :key="content.id"
-                            v-model:input-value="content.chapter_title">
+                        <document-input :key="content.id" v-model:input-value="content.chapter_title">
                             Название главы:
                         </document-input>
-                        <document-textarea
-                            :key="content.id"
-                            v-model:input-value="content.chapter">
+                        <document-textarea :key="content.id" v-model:input-value="content.chapter">
                             Содержание главы:
                         </document-textarea>
                     </div>
@@ -47,9 +47,7 @@
                     </div>
                     <hr>
 
-                    <document-input 
-                        v-for="appendix in document.appendix" 
-                        :key="appendix.id"
+                    <document-input v-for="appendix in document.appendix" :key="appendix.id"
                         v-model:input-value="appendix.appendix">
                         Приложение:
                     </document-input>
@@ -61,14 +59,10 @@
                     <hr>
                     <span class="input_title">Связанные документы</span>
                     <div v-for="link in document.links">
-                        <document-input 
-                            :key="link.id"
-                            v-model:input-value="link.link_name">
+                        <document-input :key="link.id" v-model:input-value="link.link_name">
                             Название документа:
                         </document-input>
-                        <document-input 
-                            :key="link.id"
-                            v-model:input-value="link.link">
+                        <document-input :key="link.id" v-model:input-value="link.link">
                             Ссылка на документ:
                         </document-input>
                     </div>
@@ -80,19 +74,13 @@
                     <hr>
                     <span class="input_title">Лист согласований</span>
                     <div v-for="approval in document.approval_sheet">
-                        <document-input 
-                            :key="approval.id"
-                            v-model:input-value="approval.type_of_approval">
+                        <document-input :key="approval.id" v-model:input-value="approval.type_of_approval">
                             Согласовано/разработано:
                         </document-input>
-                        <document-input 
-                            :key="approval.id"
-                            v-model:input-value="approval.fio">
+                        <document-input :key="approval.id" v-model:input-value="approval.fio">
                             Кем:
                         </document-input>
-                        <document-input 
-                            :key="approval.id"
-                            v-model:input-value="approval.position">
+                        <document-input :key="approval.id" v-model:input-value="approval.position">
                             Должность:
                         </document-input>
                     </div>
@@ -114,9 +102,10 @@
 <script>
 import DocumentInput from "@/components/DocumentInput.vue";
 import DocumentTextarea from "@/components/DocumentTextarea.vue";
+import authHeader from "@/services/auth-header";
 import axios from 'axios'
 export default {
-    components: {DocumentInput, DocumentTextarea},
+    components: { DocumentInput, DocumentTextarea },
     data() {
         return {
             count_chapter: 0,
@@ -128,11 +117,12 @@ export default {
                 date: "",
                 content: [
                     {
+                        id: 0,
                         chapter_title: "",
                         chapter: ""
                     }
                 ],
-                appendix: [ 
+                appendix: [
                     {
                         appendix: "",
                         id: 0
@@ -143,7 +133,7 @@ export default {
                         link_name: "",
                         link: ""
                     }
-                    
+
                 ],
                 approval_sheet: [
                     {
@@ -196,15 +186,54 @@ export default {
             for (var i = 0; i < this.tmpDocument.content.length; i++) {
                 this.tmpDocument.content[i].chapter = chapter[i]
             }
-            let appendix = this.tmpDocument.appendix.map(function(item) { return item['appendix']});
+            let appendix = this.tmpDocument.appendix.map(function (item) { return item['appendix'] });
             this.tmpDocument.appendix = appendix
 
             this.sendDoc()
         },
+        async sendFileToParse() {
+            try {
+                let file = this.$refs.file.files[0];
+
+                let formData = new FormData();
+
+                formData.append("file", file);
+
+                let user = JSON.parse(localStorage.getItem('user'));
+
+                let header = {
+                    Authorization: 'Bearer ' + user.accessToken,
+                    "Content-Type": "multipart/form-data"
+                };
+
+                console.log(header)
+
+                const response = await axios.post('http://localhost:8080/api/v2/smk/parsefile', formData, {
+                    headers: header
+
+                })
+
+                console.log(response)
+
+                if (response.status == 200) {
+
+                    this.document.content = response.data
+
+                    this.document.content = []
+
+                    response.data.forEach(e => {
+                        this.document.content.push({ chapter_title: e.chapter_title, chapter: e.chapter })
+                    })
+                }
+
+            } catch (e) {
+                console.log(e)
+            }
+        },
         async sendDoc() {
             try {
                 const response = await axios.post('http://localhost:8080/api/v2/smk/create', this.tmpDocument)
-            } catch(e) {
+            } catch (e) {
                 console.log(e)
             }
         }
