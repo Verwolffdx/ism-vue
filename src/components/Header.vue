@@ -1,31 +1,36 @@
 <template>
     <div class="header font-normal">
-        <router-link class="logo" to="/smk">ИСМ ЛГТУ</router-link>
+
+        <div>
+            <router-link class="logo" to="/smk">ИСМ ЛГТУ</router-link>
+            <my-button v-show="isAdmin" @click="this.$router.push('/admin')">Панель администирования</my-button>
+        </div>
         <div class="profile">
             <img class="user_icon" src="@/../public/user.png" alt="">
-            <div class="user_name"> {{  this.username }}</div>
+            <div class="user_name"> {{ this.username }}</div>
             <my-button @click.prevent="logOut">Выйти</my-button>
         </div>
     </div>
 </template>
 
 <script>
-import {auth} from '@/store/auth.module'
+import { auth } from '@/store/auth.module'
 export default {
     name: "header-item",
     data() {
         return {
+            isAdmin: auth.state.user.roles.includes('ROLE_ADMIN'),
             username: auth.state.user.fio
         }
     },
     mounted() {
         console.log(auth.state.user.fio)
-    },  
+    },
     methods: {
         logOut() {
             this.$store.dispatch('auth/logout');
             this.$router.push('/login');
-        } 
+        }
     }
 }
 </script>
@@ -39,6 +44,7 @@ export default {
     font-style: bold;
     color: black;
     text-decoration: none;
+    margin-right: 30px;
 }
 
 .header {

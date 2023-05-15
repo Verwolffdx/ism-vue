@@ -1,9 +1,10 @@
 <template>
   <header-item></header-item>
   <div class="workArea font-normal">
-    <div class="hierarchy">
-      <hierarchy></hierarchy>
-    </div>
+    <!-- <div class="hierarchy">
+    <hierarchy></hierarchy>
+    </div> -->
+    <admin-panel></admin-panel>
     <div class="register-page">
       <span class="createTitle">Регистрация пользователя</span>
       <hr>
@@ -41,7 +42,7 @@
           <div class="form-group">
             <span class="field_title" for="login">Отдел:</span>
             <Field name="divisions" v-model="divisionsArray">
-            <divisions-tree @addDivision=addDivision></divisions-tree>
+              <divisions-tree @addDivision=addDivision></divisions-tree>
             </Field>
           </div>
           <ErrorMessage name="divisions" class="error-feedback" />
@@ -65,6 +66,7 @@
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 import DivisionsTree from "@/components/UI/DivisionsTree";
+import AdminPanel from "@/components/UI/AdminPanel";
 
 export default {
   name: "RegisterComponent",
@@ -73,6 +75,7 @@ export default {
     Field,
     ErrorMessage,
     DivisionsTree,
+    AdminPanel
   },
   data() {
     const schema = yup.object().shape({

@@ -4,6 +4,7 @@ import DocumentPage from "@/pages/DocumentPage"
 import CreateDocomentPage from "@/pages/CreateDocumentPage"
 import LoginComponent from '@/pages/Login'
 import RegisterComponent from '@/pages/Register'
+import AdminPage from '@/pages/AdminPage'
 import { createRouter, createWebHistory } from "vue-router"
 import {auth} from '@/store/auth.module'
 
@@ -26,7 +27,14 @@ const routes = [
     {
         path: '/admin/create',
         component: CreateDocomentPage,
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true},
+        beforeEnter(to, from, next) {
+            if (!auth.state.user.roles.includes('ROLE_ADMIN')) {
+                next(from.path)
+            } else {
+                next()
+            }
+          }
     },
     {
         path: "/login",
@@ -36,7 +44,26 @@ const routes = [
     {
         path: "/admin/register",
         component: RegisterComponent,
-        meta: { requiresAuth: false}
+        meta: { requiresAuth: false},
+        beforeEnter(to, from, next) {
+            if (!auth.state.user.roles.includes('ROLE_ADMIN')) {
+                next(from.path)
+            } else {
+                next()
+            }
+          }
+    },
+    {
+        path: "/admin",
+        component: AdminPage,
+        meta: { requiresAuth: false},
+        beforeEnter(to, from, next) {
+            if (!auth.state.user.roles.includes('ROLE_ADMIN')) {
+                next(from.path)
+            } else {
+                next()
+            }
+          }
     }
 ]
 
@@ -55,6 +82,13 @@ router.beforeEach((to, from) => {
         query: { redirect: to.fullPath },
       }
     }
+
+    // if(!auth.state.user.roles.includes('ROLE_ADMIN')) {
+    //     return {
+    //         path: '/smk',
+    //         query: { redirect: to.fullPath },
+    //       }
+    // }
   })
 
 export default router

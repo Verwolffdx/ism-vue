@@ -2,10 +2,11 @@
     <div>
         <header-item></header-item>
         <div class="workArea font-normal">
-            <div class="hierarchy">
+            <!-- <div class="hierarchy">
                 <hierarchy></hierarchy>
                 <hr>
-            </div>
+            </div> -->
+            <admin-panel></admin-panel>
             <div class="createArea">
                 <span class="createTitle">Создать документ</span>
                 <div class="field">
@@ -100,13 +101,14 @@
 </template>
 
 <script>
-import DocumentInput from "@/components/DocumentInput.vue";
-import DocumentTextarea from "@/components/DocumentTextarea.vue";
+import DocumentInput from "@/components/DocumentInput";
+import DocumentTextarea from "@/components/DocumentTextarea";
+import AdminPanel from "@/components/UI/AdminPanel";
 import authHeader from "@/services/auth-header";
 import fileHeader from "@/services/file-header"
 import axios from 'axios'
 export default {
-    components: { DocumentInput, DocumentTextarea },
+    components: { DocumentInput, DocumentTextarea, AdminPanel },
     data() {
         return {
             //Количество глав

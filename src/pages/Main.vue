@@ -1,9 +1,12 @@
 <template>
     <div>
         <header-item></header-item>
+
         <div class="workArea font-normal">
             <div class="hierarchy">
+                
                 <hierarchy></hierarchy>
+                
                 <hr>
                 <!-- Добавление документа (из видео) -->
                 <!-- <my-button @click="showDialog">Создать документ</my-button>
@@ -87,13 +90,14 @@ export default {
             // ],
             dialogVisible: false,
             // documentsLoading: false
-            
+
         }
     },
     mounted() {
         // value = getValue()
         // console.log(this.value)
     },
+
     computed: {
         ...mapState({
             isSearched: state => state.document.isSearched,
@@ -112,6 +116,7 @@ export default {
         }
     },
     methods: {
+        
         ...mapMutations({
             setSearchValue: 'document/setSearchValue'
         }),
