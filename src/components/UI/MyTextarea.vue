@@ -6,7 +6,7 @@
 export default {
     name: 'my-textarea',
     props: {
-        modelValue: [String, Number]
+        modelValue: [Array]
     },
     methods: {
         updateInput(event) {

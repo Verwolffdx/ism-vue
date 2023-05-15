@@ -103,13 +103,16 @@
 import DocumentInput from "@/components/DocumentInput.vue";
 import DocumentTextarea from "@/components/DocumentTextarea.vue";
 import authHeader from "@/services/auth-header";
+import fileHeader from "@/services/file-header"
 import axios from 'axios'
 export default {
     components: { DocumentInput, DocumentTextarea },
     data() {
         return {
+            //Количество глав
             count_chapter: 0,
             tmpDocument: {},
+            //Модель документа
             document: {
                 name: "",
                 code: "",
@@ -117,9 +120,9 @@ export default {
                 date: "",
                 content: [
                     {
-                        id: 0,
+                        // id: 1,
                         chapter_title: "",
-                        chapter: ""
+                        chapter: []
                     }
                 ],
                 appendix: [
@@ -145,36 +148,47 @@ export default {
             },
         }
     },
+    mounted() {
+        // this.addChapter()
+    },
     methods: {
-
+        //Добавить одну главу
         addChapter() {
             this.document.content.push({ chapter_title: '', chapter: [], id: this.document.content.length })
         },
+        //Удалить одну главу
         deleteChapter() {
             if (this.document.content.length > 1)
                 this.document.content.pop()
         },
+        //Добавить одно приложение
         addAppendix() {
             this.document.appendix.push({ appendix: '', id: this.document.appendix.length })
         },
+        //Удалить одно приложение
         deleteAppendix() {
             if (this.document.appendix.length > 1)
                 this.document.appendix.pop()
         },
+        //Добавить одну ссылку
         addLink() {
             this.document.links.push({ link_name: '', link: '', id: this.document.links.length })
         },
+        //Удалить одну ссылку
         deleteLink() {
             if (this.document.links.length > 1)
                 this.document.links.pop()
         },
+        //Добавить одного соглаванта
         addApproval() {
             this.document.approval_sheet.push({ type_of_approval: '', fio: '', position: '', id: this.document.links.length })
         },
+        //Удалить одного соглаванта
         deleteApproval() {
             if (this.approval_sheet.length > 1)
                 this.approval_sheet.pop()
         },
+        //Создание документа и его отправка
         createDocument() {
             this.tmpDocument = this.document;
             let chapter = [];
@@ -191,45 +205,32 @@ export default {
 
             this.sendDoc()
         },
+
+        //Отправка файла для парсинга и получения содержимого документа (название глав и их содержание)
         async sendFileToParse() {
             try {
+                
                 let file = this.$refs.file.files[0];
 
                 let formData = new FormData();
 
                 formData.append("file", file);
-
-                let user = JSON.parse(localStorage.getItem('user'));
-
-                let header = {
-                    Authorization: 'Bearer ' + user.accessToken,
-                    "Content-Type": "multipart/form-data"
-                };
-
-                console.log(header)
-
+                
                 const response = await axios.post('http://localhost:8080/api/v2/smk/parsefile', formData, {
-                    headers: header
-
+                    headers: fileHeader()
                 })
 
-                console.log(response)
+                this.document.content = []
 
                 if (response.status == 200) {
-
                     this.document.content = response.data
-
-                    this.document.content = []
-
-                    response.data.forEach(e => {
-                        this.document.content.push({ chapter_title: e.chapter_title, chapter: e.chapter })
-                    })
                 }
 
             } catch (e) {
                 console.log(e)
             }
         },
+        //Отправка документа для сохранения
         async sendDoc() {
             try {
                 const response = await axios.post('http://localhost:8080/api/v2/smk/create', this.tmpDocument)

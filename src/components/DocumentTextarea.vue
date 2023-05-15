@@ -16,7 +16,7 @@
          * значение инпута
          */
         inputValue: {
-          type: [String, Number],
+          type: [Array],
           default: ''
         }
       },
@@ -35,9 +35,6 @@
          */
         isShowTitle() {
           return this.$slots?.default()?.[0];
-        },
-        chapterToArray() {
-          
         }
       },
   
