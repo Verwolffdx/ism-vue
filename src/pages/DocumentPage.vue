@@ -4,7 +4,12 @@
         <header-item></header-item>
         <div class="workArea font-normal">
             <div class="hierarchy">
-                <hierarchy></hierarchy>
+                <!-- <hierarchy></hierarchy> -->
+                <my-button @click="scroll()">Подтвердить ознакомление</my-button>
+                <strong>Найденные элементы</strong>
+                <div class="hierarchy_item" v-for="item in this.document(this.$route.params.id).find">
+                    <div v-html="item.item" :id="item.ref"></div>
+                </div>
 
                 <hr>
                 <strong>Связанные документы</strong>
@@ -43,6 +48,12 @@
                     </div>
                 </div>
 
+                <div class="fam" ref="fam">
+                    <input class="fam-input" type="checkbox">
+                    <label class="fam-label">Подтвердить ознакомление</label>
+                </div>
+
+
             </div>
 
         </div>
@@ -59,9 +70,12 @@ export default {
         }
     },
     methods: {
-
+        scroll() {
+            this.$refs["fam"].scrollIntoView({ behavior: "smooth" })
+        },
     },
     mounted() {
+        console.log(this.document(this.$route.params.id).find)
     },
     computed: {
         ...mapGetters({
@@ -128,7 +142,8 @@ export default {
 .documentArea {
     display: flex;
     flex-direction: column;
-    width: %;
+    /* width: %; */
+    max-width: 1350px;
     padding: 10px;
     padding: 10px 5%;
     font-size: 20px;
@@ -139,7 +154,7 @@ export default {
     text-align: right;
 }
 
-.buttons > * {
+.buttons>* {
     margin-right: 10px;
 }
 
@@ -174,8 +189,20 @@ export default {
     padding: 10px;
 }
 
-.approval_sheet > * {
+.approval_sheet>* {
     padding: 10px;
+}
+
+.fam {
+    text-align: center;
+    font-weight: 700;
+    margin-top: 50px;
+    margin-bottom: 150px;
+}
+
+.fam-input {
+    transform: scale(1.5);
+    margin-right: 10px;
 }
 
 hr {

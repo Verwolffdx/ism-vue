@@ -1,5 +1,6 @@
 import axios from 'axios'
 import authHeader from '@/services/auth-header';
+import { auth } from '@/store/auth.module'
 
 export const documentModule = {
     state: () => ({
@@ -44,55 +45,84 @@ export const documentModule = {
                 commit('setDocuments', [])
                 commit('setLoading', true)
 
-                const response = await axios.get('http://localhost:8080/api/v2/smk/find?value=' + state.searchValue, { headers: authHeader() })
+                let body = {
+                    user_id: auth.state.user.id,
+                    search_value: state.searchValue
+                }
+
+                const response = await axios.post('http://localhost:8080/api/v2/smk/find', body,
+                    { headers: authHeader() },
+                )
                 // console.log(response.request)
                 // console.log(response)
 
                 if (response.status === 200) {
                     commit('setSearched', true)
 
+                    console.log(response.data)
+
                     response.data.forEach(e => {
-                        let id = e.content.id
-                        let code = e.content.code
+                        let find = []
+                        let id_item = 0
+
+                        let id = e.id
+                        let code = e.code
                         if (e.highlightFields?.code) {
                             code = e.highlightFields.code[0]
                         }
-                        let title = e.content.name
+                        let title = e.name
                         if (e.highlightFields?.name) {
                             title = e.highlightFields.name[0]
                         }
+
                         
-                        let find = []
-                        if (e.highlightFields?.appendix) {
-                            e.highlightFields.appendix.forEach(appendix => find.push(appendix))
+                        // if (e.highlightFields?.appendix) {
+                        //     e.highlightFields.appendix.forEach(appendix => find.push({ ref: id_item++, item: appendix }))
+                        // }
+
+                        let content = e.content
+                        if (e.highlightFields?.code) {
+                            e.highlightFields.code.forEach(content => find.push({ ref: id_item++, item: content }))
+                        }
+                        if (e.highlightFields?.name) {
+                            e.highlightFields.name.forEach(content => find.push({ ref: id_item++, item: content }))
                         }
 
-                        let content = e.content.content
-                        if (e.highlightFields?.content) {
-                            e.highlightFields.content.forEach(content => find.push(content))
+                        if (e.highlightFields?.["content.chapter"]) {
+                            e.highlightFields["content.chapter"].forEach(content => find.push({ ref: id_item++, item: content }))
                         }
 
-                        let date = e.content.date
+                        if (e.highlightFields?.["content.chapter_title"]) {
+                            e.highlightFields["content.chapter_title"].forEach(content => find.push({ ref: id_item++, item: content }))
+                        }
+                        // TODO Синхронизировать содержание документа и найденные элементы для скоролла к ним
+                        // find.forEach(item => {
+
+                        // })
+
+                        let date = e.date
                         if (e.highlightFields?.date) {
-                            e.highlightFields.date.forEach(date => find.push(date))
+                            e.highlightFields.date.forEach(date => find.push({ ref: id_item++, item: date }))
                         }
 
-                        let links = e.content.links
+                        let links = e.links
                         if (e.highlightFields?.links) {
-                            e.highlightFields.links.forEach(links => find.push(links))
+                            e.highlightFields.links.forEach(links => find.push({ ref: id_item++, item: links }))
                         }
 
-                        let appendix = e.content.appendix
+                        let appendix = e.appendix
                         if (e.highlightFields?.appendix) {
-                            e.highlightFields.appendix.forEach(appendix => find.push(appendix))
+                            e.highlightFields.appendix.forEach(appendix => find.push({ ref: id_item++, item: appendix }))
                         }
 
-                        let approval_sheet = e.content.approval_sheet
+                        let approval_sheet = e.approval_sheet
                         if (e.highlightFields?.approval_sheet) {
-                            e.highlightFields.approval_sheet.forEach(approval_sheet => find.push(approval_sheet))
+                            e.highlightFields.approval_sheet.forEach(approval_sheet => find.push({ ref: id_item++, item: approval_sheet }))
                         }
 
-                        let version = e.content.version
+                        let version = e.version
+
+                        let isFavorite = e.favorite
 
                         commit('pushDocuments', {
                             id,
@@ -104,7 +134,8 @@ export const documentModule = {
                             links,
                             appendix,
                             approval_sheet,
-                            version
+                            version,
+                            isFavorite
                         })
                     })
 
@@ -139,7 +170,7 @@ export const documentModule = {
                         if (e.highlightFields?.name) {
                             title = e.highlightFields.name[0]
                         }
-                        
+
                         let find = []
                         if (e.highlightFields?.appendix) {
                             e.highlightFields.appendix.forEach(appendix => find.push(appendix))
