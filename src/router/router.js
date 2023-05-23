@@ -5,8 +5,10 @@ import CreateDocomentPage from "@/pages/CreateDocumentPage"
 import LoginComponent from '@/pages/Login'
 import RegisterComponent from '@/pages/Register'
 import AdminPage from '@/pages/AdminPage'
+import FavoritesPage from '@/pages/FavoritesPage'
+import RegisterOfDocumentsPage from '@/pages/RegisterOfDocumentsPage'
 import { createRouter, createWebHistory } from "vue-router"
-import {auth} from '@/store/auth.module'
+import { auth } from '@/store/auth.module'
 
 const routes = [
 
@@ -25,16 +27,21 @@ const routes = [
         meta: { requiresAuth: true }
     },
     {
+        path: '/smk/favorites',
+        component: FavoritesPage,
+        meta: { requiresAuth: true }
+    },
+    {
         path: '/admin/create',
         component: CreateDocomentPage,
-        meta: { requiresAuth: true},
+        meta: { requiresAuth: true },
         beforeEnter(to, from, next) {
             if (!auth.state.user.roles.includes('ROLE_ADMIN')) {
                 next(from.path)
             } else {
                 next()
             }
-          }
+        }
     },
     {
         path: "/login",
@@ -44,26 +51,38 @@ const routes = [
     {
         path: "/admin/register",
         component: RegisterComponent,
-        meta: { requiresAuth: false},
+        meta: { requiresAuth: false },
         beforeEnter(to, from, next) {
             if (!auth.state.user.roles.includes('ROLE_ADMIN')) {
                 next(from.path)
             } else {
                 next()
             }
-          }
+        }
     },
     {
         path: "/admin",
         component: AdminPage,
-        meta: { requiresAuth: false},
+        meta: { requiresAuth: false },
         beforeEnter(to, from, next) {
             if (!auth.state.user.roles.includes('ROLE_ADMIN')) {
                 next(from.path)
             } else {
                 next()
             }
-          }
+        }
+    },
+    {
+        path: "/admin/docregister",
+        component: RegisterOfDocumentsPage,
+        meta: { requiresAuth: false },
+        beforeEnter(to, from, next) {
+            if (!auth.state.user.roles.includes('ROLE_ADMIN')) {
+                next(from.path)
+            } else {
+                next()
+            }
+        }
     }
 ]
 
@@ -77,10 +96,10 @@ router.beforeEach((to, from) => {
 
 
     if (to.meta.requiresAuth && !auth.state.status.loggedIn) {
-      return {
-        path: '/login',
-        query: { redirect: to.fullPath },
-      }
+        return {
+            path: '/login',
+            query: { redirect: to.fullPath },
+        }
     }
 
     // if(!auth.state.user.roles.includes('ROLE_ADMIN')) {
@@ -89,6 +108,6 @@ router.beforeEach((to, from) => {
     //         query: { redirect: to.fullPath },
     //       }
     // }
-  })
+})
 
 export default router

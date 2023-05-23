@@ -9,6 +9,7 @@
             <admin-panel></admin-panel>
             <div class="createArea">
                 <span class="createTitle">Создать документ</span>
+
                 <div class="field">
                     <input type="file" ref="file">
                     <my-button @click="sendFileToParse">Загрузить файл</my-button>
@@ -96,6 +97,11 @@
                 </div>
             </div>
 
+            <!-- Модальное окно -->
+            <my-modal v-if="showModal" @close="this.showModal = false">
+                <template v-slot:header>Документ успешно создан</template>
+            </my-modal>
+
         </div>
     </div>
 </template>
@@ -104,16 +110,19 @@
 import DocumentInput from "@/components/DocumentInput";
 import DocumentTextarea from "@/components/DocumentTextarea";
 import AdminPanel from "@/components/UI/AdminPanel";
+import MyModal from "@/components/UI/MyModal"
 import authHeader from "@/services/auth-header";
 import fileHeader from "@/services/file-header"
 import axios from 'axios'
 export default {
-    components: { DocumentInput, DocumentTextarea, AdminPanel },
+    components: { DocumentInput, DocumentTextarea, AdminPanel, MyModal },
     data() {
         return {
+            showModal: false,
             //Количество глав
             count_chapter: 0,
             tmpDocument: {},
+            document_id: "",
             //Модель документа
             document: {
                 name: "",
@@ -122,19 +131,20 @@ export default {
                 date: "",
                 content: [
                     {
-                        // id: 1,
+                        id: 0,
                         chapter_title: "",
                         chapter: []
                     }
                 ],
                 appendix: [
                     {
-                        appendix: "",
-                        id: 0
+                        id: 0,
+                        appendix: ""
                     }
                 ],
                 links: [
                     {
+                        id: 0,
                         link_name: "",
                         link: ""
                     }
@@ -142,6 +152,7 @@ export default {
                 ],
                 approval_sheet: [
                     {
+                        id: 0,
                         type_of_approval: "",
                         fio: "",
                         position: ""
@@ -195,7 +206,7 @@ export default {
             this.tmpDocument = this.document;
             let chapter = [];
             this.tmpDocument.content.forEach(el => {
-                let ch = el.chapter.split(`\n`)
+                let ch = el.chapter.toString().split('\n')
                 chapter.push(ch)
             })
 
@@ -211,13 +222,13 @@ export default {
         //Отправка файла для парсинга и получения содержимого документа (название глав и их содержание)
         async sendFileToParse() {
             try {
-                
+
                 let file = this.$refs.file.files[0];
 
                 let formData = new FormData();
 
                 formData.append("file", file);
-                
+
                 const response = await axios.post('http://localhost:8080/api/v2/smk/parsefile', formData, {
                     headers: fileHeader()
                 })
@@ -235,10 +246,113 @@ export default {
         //Отправка документа для сохранения
         async sendDoc() {
             try {
-                const response = await axios.post('http://localhost:8080/api/v2/smk/create', this.tmpDocument)
+                const response = await axios.post('http://localhost:8080/api/v2/smk/create', this.tmpDocument, { headers: authHeader() })
+
+                if (response.status == 200) {
+                    console.log(response)
+                    this.document_id = response.data.document_id
+                    this.showModal = true
+                }
             } catch (e) {
+                alert(e)
                 console.log(e)
+            } finally {
+                
             }
+        },
+        resetFields() {
+            // this.showModal = false
+
+            this.$router.push('/smk/document/' + this.document_id)
+
+            // this.count_chapter = 0
+            // this.tmpDocument = {}
+
+            // let content = [
+            //     {
+            //         id: 0,
+            //         chapter_title: "",
+            //         chapter: [""]
+            //     }
+            // ]
+
+            // let appendix = [
+            //         {
+            //             id: 0,
+            //             appendix: ""
+            //         }
+            //     ]
+
+            // let links = [
+            //         {
+            //             id: 0,
+            //             link_name: "",
+            //             link: ""
+            //         }
+
+            //     ]
+
+            // let approval_sheet = [
+            //         {
+            //             id: 0,
+            //             type_of_approval: "",
+            //             fio: "",
+            //             position: ""
+            //         }
+            //     ]
+
+
+            // let emptyDocument = {
+            //     name: "",
+            //     code: "",
+            //     version: "",
+            //     date: "",
+            //     content: content,
+            //     appendix: appendix,
+            //     links: links,
+            //     approval_sheet: approval_sheet
+            // }
+
+            // this.document.$remove
+            // this.document = emptyDocument
+
+            
+
+            // this.document = {
+            //     name: "",
+            //     code: "",
+            //     version: "",
+            //     date: "",
+            //     content: [
+            //         {
+            //             id: 0,
+            //             chapter_title: "",
+            //             chapter: []
+            //         }
+            //     ],
+            //     appendix: [
+            //         {
+            //             id: 0,
+            //             appendix: ""
+            //         }
+            //     ],
+            //     links: [
+            //         {
+            //             id: 0,
+            //             link_name: "",
+            //             link: ""
+            //         }
+
+            //     ],
+            //     approval_sheet: [
+            //         {
+            //             id: 0,
+            //             type_of_approval: "",
+            //             fio: "",
+            //             position: ""
+            //         }
+            //     ]
+            // }
         }
     }
 }

@@ -2,6 +2,7 @@
     <div class="admin-panel">
         <my-button class="panel-button" @click="toCreate()">Создание документа</my-button>
         <my-button class="panel-button" @click="toRegister()">Регистрация пользователя</my-button>
+        <my-button class="panel-button" @click="toDocRegister()">Реестр документов</my-button>
         <my-button class="panel-button">Создание шаблона</my-button>
         <my-button class="panel-button">Редактирование иерархии</my-button>
         <my-button class="panel-button">Реестр документов</my-button>
@@ -20,6 +21,9 @@ export default {
         toRegister() {
             this.$router.push("/admin/register")
         },
+        toDocRegister() {
+            this.$router.push("/admin/docregister")
+        }
     }
 }
 </script>

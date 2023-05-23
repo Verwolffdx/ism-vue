@@ -7,10 +7,10 @@
                     <span>&nbsp;</span>
                     <span v-html="document.title"></span>
                 </router-link>
-                <div @click="toFavorite" :class="{ favorite: isFavorite, nofavorite: !isFavorite }"></div>
+                <div @click="deleteDocument" >Удалить</div>
             </div>
             
-            <div class="document_content" v-for="find in document.find" v-html="find.item"></div>
+            <my-button class="document_content" v-for="find in document.find" v-html="find.item"></my-button>
         </div>
         <div class="document__btns">
             <!-- <my-button @click="$router.push(`/smk/document/${document.id}`)">Открыть</my-button> -->
@@ -41,34 +41,21 @@ export default {
         }
     },
     methods: {
-        async toFavorite() {
+        async deleteDocument() {
             try {
 
-                let body = {
-                    document_id: this.document.id,
-                    user_id: auth.state.user.id
-                }
+                
 
 
-                if (this.isFavorite) {
-                    const response = await axios.post('http://localhost:8080/api/v2/smk/deletefavorites', body, {
+                
+                    const response = await axios.delete('http://localhost:8080/api/v2/smk/deleteDocument?id=' + this.document.id, {
                         headers: authHeader()
                     })
 
                     if (response.status == 200) {
-                        this.isFavorite = this.isFavorite ? false : true
-                        this.document.isFavorite = this.document.isFavorite ? false : true
+                        console.log(response)
                     }
-                } else {
-                    const response = await axios.post('http://localhost:8080/api/v2/smk/addfavorites', body, {
-                        headers: authHeader()
-                    })
-
-                    if (response.status == 200) {
-                        this.isFavorite = this.isFavorite ? false : true
-                        this.document.isFavorite = this.document.isFavorite ? false : true
-                    }
-                }
+               
 
 
 
@@ -83,16 +70,7 @@ export default {
 </script>
 
 <style scoped>
-.nofavorite {
-    background: url("@/../public/nofavorite.png");
-    background-size: contain;
-    height: 25px;
-    min-width: 25px;
-    cursor: pointer;
-    background-repeat: no-repeat;
-}
-
-.favorite {
+.btn-delete {
     background: url("@/../public/favorite.png");
     background-size: contain;
     min-width: 25px;
@@ -100,6 +78,8 @@ export default {
     cursor: pointer;
     background-repeat: no-repeat;
 }
+
+
 
 .document {
     padding: 10px 0;

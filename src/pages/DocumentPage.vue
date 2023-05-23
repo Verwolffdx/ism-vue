@@ -2,18 +2,23 @@
     <!-- <h1>Страница документа с id = {{ $route.params.id }}</h1> -->
     <div>
         <header-item></header-item>
-        <div class="workArea font-normal">
+        <div v-if="!this.loading" class="workArea font-normal">
             <div class="hierarchy">
                 <!-- <hierarchy></hierarchy> -->
                 <my-button @click="scroll()">Подтвердить ознакомление</my-button>
-                <strong>Найденные элементы</strong>
-                <div class="hierarchy_item" v-for="item in this.document(this.$route.params.id).find">
-                    <div v-html="item.item" :id="item.ref"></div>
+                <div
+                    v-show="typeof this.document.find != undefined && this.document.find != null && this.document.find.length != null && this.document.find.length > 1">
+                    <strong>Найденные элементы</strong>
+                    <div class="hierarchy_item" v-for=" item in this.document.find ">
+                        <div v-html="item.item" :id="item.ref"></div>
+                    </div>
                 </div>
+
+
 
                 <hr>
                 <strong>Связанные документы</strong>
-                <div class="hierarchy_item" v-for="link in this.document(this.$route.params.id).links">
+                <div class="hierarchy_item" v-for=" link  in  this.document.links ">
                     <div v-html="link.link_name"></div>
                 </div>
 
@@ -24,24 +29,24 @@
                     <my-button>Скачать</my-button>
                 </div>
                 <div class="title_list">
-                    <div class="title_item" v-html="this.document(this.$route.params.id).title"></div>
-                    <div class="title_item" v-html="this.document(this.$route.params.id).code"></div>
-                    <div class="title_item">Версия {{ this.document(this.$route.params.id).version }}</div>
+                    <div class="title_item" v-html="this.document.title"></div>
+                    <div class="title_item" v-html="this.document.code"></div>
+                    <div class="title_item">Версия {{ this.document.version }}</div>
                 </div>
-                <div class="title_item"> Дата введения {{ this.document(this.$route.params.id).date }}</div>
-                <div class="document_content" v-for="content in this.document(this.$route.params.id).content">
+                <div class="title_item"> Дата введения {{ this.document.date }}</div>
+                <div class="document_content" v-for=" content  in  this.document.content ">
                     <div class="chapter_title" v-html="content.chapter_title"></div>
-                    <div class="chapter" v-for="ch in content.chapter" v-html="ch"></div>
+                    <div class="chapter" v-for=" ch  in  content.chapter " v-html="ch"></div>
                 </div>
 
                 <div class="appendix">
                     <span class="chapter_title">Приложение</span>
-                    <div v-for="appendix in this.document(this.$route.params.id).appendix" v-html="appendix"></div>
+                    <div v-for=" appendix  in  this.document.appendix " v-html="appendix"></div>
                 </div>
 
                 <div class="approval_sheet">
                     <span class="chapter_title">Лист согласований</span>
-                    <div v-for="approval in this.document(this.$route.params.id).approval_sheet">
+                    <div v-for=" approval  in  this.document.approval_sheet ">
                         <div v-html="approval.type_of_approval"></div>
                         <div v-html="approval.position"></div>
                         <div v-html="approval.fio"></div>
@@ -57,31 +62,170 @@
             </div>
 
         </div>
+        <div v-else>Загрузка</div>
     </div>
 </template>
 <script>
-import { mapGetters } from 'vuex'
-
+import { mapGetters, mapActions } from 'vuex'
+import axios from 'axios'
+import { auth } from '@/store/auth.module'
+import authHeader from '@/services/auth-header';
 
 export default {
+    сompomnents: { auth },
+
     data() {
         return {
+            // document: {}
+            loading: true
+        }
+    },
+    beforeMount() {
+        this.getDocumentByIdWithHighlight(this.$route.params.id)
 
+    },
+    mounted() {
+        // this.getDocumentById()
+        // console.log(this.document(this.$route.params.id).find)
+        // this.document(this.$route.params.id)
+        // this.getDocument(this.$route.params.id)
+
+        // this.getDocumentById()
+
+
+
+    },
+    watch: {
+        document: function () {
+            if (typeof this.document != undefined) {
+                this.loading = false
+            }
         }
     },
     methods: {
         scroll() {
             this.$refs["fam"].scrollIntoView({ behavior: "smooth" })
         },
-    },
-    mounted() {
-        console.log(this.document(this.$route.params.id).find)
+        ...mapActions({
+            getDocumentByIdWithHighlight: 'document/getDocumentByIdWithHighlight'
+        }),
+        // async getDocumentById() {
+        //     try {
+
+
+        //         let body = {
+        //             document_id: this.$route.params.id,
+        //             // value: state.searchValue,
+        //             user_id: auth.state.user.id,
+        //         }
+
+        //         const response = await axios.post('http://localhost:8080/api/v2/smk/document', body,
+        //             { headers: authHeader() },
+        //         )
+        //         // console.log(response.request)
+        //         // console.log(response.data)
+
+        //         if (response.status === 200) {
+
+
+        //             // console.log(response.data)
+
+        //             // response.data.forEach(e => {
+        //             let find = []
+        //             let id_item = 0
+
+        //             let id = response.data.id
+        //             let code = response.data.code
+        //             if (response.data.highlightFields?.code) {
+        //                 code = response.data.highlightFields.code[0]
+        //             }
+        //             let title = response.data.name
+        //             if (response.data.highlightFields?.name) {
+        //                 title = response.data.highlightFields.name[0]
+        //             }
+
+
+        //             // if (e.highlightFields?.appendix) {
+        //             //     e.highlightFields.appendix.forEach(appendix => find.push({ ref: id_item++, item: appendix }))
+        //             // }
+
+        //             let content = response.data.content
+        //             if (response.data.highlightFields?.code) {
+        //                 response.data.highlightFields.code.forEach(content => find.push({ ref: id_item++, item: content }))
+        //             }
+        //             if (response.data.highlightFields?.name) {
+        //                 response.data.highlightFields.name.forEach(content => find.push({ ref: id_item++, item: content }))
+        //             }
+
+        //             if (response.data.highlightFields?.["content.chapter"]) {
+        //                 response.data.highlightFields["content.chapter"].forEach(content => find.push({ ref: id_item++, item: content }))
+        //             }
+
+        //             if (response.data.highlightFields?.["content.chapter_title"]) {
+        //                 response.data.highlightFields["content.chapter_title"].forEach(content => find.push({ ref: id_item++, item: content }))
+        //             }
+        //             // TODO Синхронизировать содержание документа и найденные элементы для скоролла к ним
+        //             // find.forEach(item => {
+
+        //             // })
+
+        //             let date = response.data.date
+        //             if (response.data.highlightFields?.date) {
+        //                 response.data.highlightFields.date.forEach(date => find.push({ ref: id_item++, item: date }))
+        //             }
+
+        //             let links = response.data.links
+        //             if (response.data.highlightFields?.links) {
+        //                 response.data.highlightFields.links.forEach(links => find.push({ ref: id_item++, item: links }))
+        //             }
+
+        //             let appendix = response.data.appendix
+        //             if (response.data.highlightFields?.appendix) {
+        //                 response.data.highlightFields.appendix.forEach(appendix => find.push({ ref: id_item++, item: appendix }))
+        //             }
+
+        //             let approval_sheet = response.data.approval_sheet
+        //             if (response.data.highlightFields?.approval_sheet) {
+        //                 response.data.highlightFields.approval_sheet.forEach(approval_sheet => find.push({ ref: id_item++, item: approval_sheet }))
+        //             }
+
+        //             let version = response.data.version
+
+        //             let isFavorite = response.data.favorite
+
+        //             this.document = {
+        //                 id,
+        //                 code,
+        //                 title,
+        //                 content,
+        //                 find,
+        //                 date,
+        //                 links,
+        //                 appendix,
+        //                 approval_sheet,
+        //                 version,
+        //                 isFavorite
+        //             }
+
+
+        //         }
+        //     } catch (e) {
+        //         alert(e)
+        //         console.log(e)
+
+        //     } finally {
+
+        //     }
+        // }
     },
     computed: {
         ...mapGetters({
-            document: 'document/getDocumentById'
+            // document: 'document/getDocumentById'
+            document: 'document/getDocument'
         })
-    }
+
+    },
+
 }
 </script>
 <style scoped>
