@@ -92,6 +92,11 @@
                         <my-button class="button" @click="deleteApproval">Удалить согласованта</my-button>
                     </div>
 
+                    <span class="input_title">Лист ознакомления (отделы:)</span>
+                    <div class="field">
+                        <divisions-tree v-model="divisionsArray" @addDivision=addDivision></divisions-tree>
+                    </div>
+
                     <hr>
                     <my-button class="button" @click="createDocument">Создать документ</my-button>
                 </div>
@@ -111,13 +116,15 @@ import DocumentInput from "@/components/DocumentInput";
 import DocumentTextarea from "@/components/DocumentTextarea";
 import AdminPanel from "@/components/UI/AdminPanel";
 import MyModal from "@/components/UI/MyModal"
+import DivisionsTree from "@/components/UI/DivisionsTree"
 import authHeader from "@/services/auth-header";
 import fileHeader from "@/services/file-header"
 import axios from 'axios'
 export default {
-    components: { DocumentInput, DocumentTextarea, AdminPanel, MyModal },
+    components: { DocumentInput, DocumentTextarea, AdminPanel, MyModal, DivisionsTree },
     data() {
         return {
+            divisionsArray: [],
             showModal: false,
             //Количество глав
             count_chapter: 0,
@@ -165,6 +172,13 @@ export default {
         // this.addChapter()
     },
     methods: {
+        addDivision(item) {
+            if (this.divisionsArray.includes(item.id)) {
+                this.divisionsArray = this.divisionsArray.filter(e => e !== item.division_id)
+            }
+            else
+                this.divisionsArray.push(item.division_id)
+        },
         //Добавить одну главу
         addChapter() {
             this.document.content.push({ chapter_title: '', chapter: [], id: this.document.content.length })
@@ -246,7 +260,11 @@ export default {
         //Отправка документа для сохранения
         async sendDoc() {
             try {
-                const response = await axios.post('http://localhost:8080/api/v2/smk/create', this.tmpDocument, { headers: authHeader() })
+                let body = {
+                    document: this.document,
+                    divisions: this.divisionsArray
+                }
+                const response = await axios.post('http://localhost:8080/api/v2/smk/create', body, { headers: authHeader() })
 
                 if (response.status == 200) {
                     console.log(response)
@@ -257,7 +275,7 @@ export default {
                 alert(e)
                 console.log(e)
             } finally {
-                
+
             }
         },
         resetFields() {
@@ -316,7 +334,7 @@ export default {
             // this.document.$remove
             // this.document = emptyDocument
 
-            
+
 
             // this.document = {
             //     name: "",

@@ -53,9 +53,10 @@
                     </div>
                 </div>
 
-                <div class="fam" ref="fam">
-                    <input class="fam-input" type="checkbox">
-                    <label class="fam-label">Подтвердить ознакомление</label>
+                <div class="fam" ref="fam" v-if="!this.isFamiliarize">
+                    <!-- <input class="fam-input" type="checkbox"> -->
+                    <!-- <label class="fam-label"></label> -->
+                    <my-button @click="this.showModal = true">Подтвердить ознакомление</my-button>
                 </div>
 
 
@@ -63,6 +64,13 @@
 
         </div>
         <div v-else>Загрузка</div>
+
+        <!-- Модальное окно -->
+        <my-modal v-if="showModal" @close="confirmFamiliarize()">
+            <template v-slot:header>Вы ознакомились с документом?</template>
+            <template v-slot:footer>Да</template>
+        </my-modal>
+
     </div>
 </template>
 <script>
@@ -70,14 +78,17 @@ import { mapGetters, mapActions } from 'vuex'
 import axios from 'axios'
 import { auth } from '@/store/auth.module'
 import authHeader from '@/services/auth-header';
+import MyModal from "@/components/UI/MyModal.vue"
 
 export default {
-    сompomnents: { auth },
+    components: { auth, MyModal },
 
     data() {
         return {
             // document: {}
-            loading: true
+            showModal: false,
+            loading: true,
+            isFamiliarize: false,
         }
     },
     beforeMount() {
@@ -92,13 +103,14 @@ export default {
 
         // this.getDocumentById()
 
-
+        // this.isFamiliarize = this.document.isFamiliarize
 
     },
     watch: {
         document: function () {
             if (typeof this.document != undefined) {
                 this.loading = false
+                this.isFamiliarize = this.document.isFamiliarize
             }
         }
     },
@@ -109,6 +121,38 @@ export default {
         ...mapActions({
             getDocumentByIdWithHighlight: 'document/getDocumentByIdWithHighlight'
         }),
+        async confirmFamiliarize() {
+            try {
+
+
+                // const response = await axios.get('http://localhost:8080/api/v2/smk/confirmFamiliarization?user_id=' + auth.state.user.id + "&document_id=" + this.document.id,
+                //     { headers: authHeader() }
+                // )
+
+                // const response = await axios.put('http://localhost:8080/api/v2/smk/confirmFamiliarization?user_id=' + auth.state.user.id + "&document_id=" + this.document.id,
+                //     { headers: authHeader() }
+                // )
+
+                const response = await axios({
+                    headers: authHeader(),
+                    method: "put",
+                    url: 'http://localhost:8080/api/v2/smk/confirmFamiliarization?user_id=' + auth.state.user.id + "&document_id=" + this.document.id,
+                })
+
+
+
+                if (response.status == 200) {
+                    console.log(response.data)
+                }
+
+            } catch (e) {
+                console.log(e)
+            } finally {
+                this.showModal = false
+                this.isFamiliarize = !this.isFamiliarize
+            }
+
+        }
         // async getDocumentById() {
         //     try {
 

@@ -16,11 +16,14 @@
                         </div>
 
                         <div class="modal-footer">
-                            <slot name="footer">
+                            <!-- <slot name="footer"> -->
                                 <my-button class="modal-default-button" @click="$emit('close')">
-                                    OK
+                                    <slot name="footer">
+                                        OK
+                                    </slot>
+                                    <!-- OK -->
                                 </my-button>
-                            </slot>
+                            <!-- </slot> -->
                         </div>
                     </div>
                 </div>

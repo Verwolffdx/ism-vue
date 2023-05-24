@@ -28,6 +28,11 @@
                     :numOfResults="numOfResults" @remove="removeDocument"></document-list>
             </div>
 
+            <div class="famSheet" v-if="famSheet.length > 0">
+                <span>Ознакомьтесь с документами</span>
+                <fam-list :famSheet="famSheet"></fam-list>
+            </div>
+
         </div>
     </div>
 </template>
@@ -35,12 +40,13 @@
 <script>
 import DocumentForm from '@/components/DocumentForm'
 import DocumentList from '@/components/DocumentList'
+import FamList from '@/components/FamList'
 import { mapState, mapActions, mapMutations, mapGetters } from 'vuex'
 
 import axios from 'axios'
 export default {
     components: {
-        DocumentForm, DocumentList
+        DocumentForm, DocumentList, FamList
     },
     data() {
         return {
@@ -96,6 +102,7 @@ export default {
     mounted() {
         // value = getValue()
         // console.log(this.value)
+        this.fecthFamiliarizationSheetForUser()
     },
 
     computed: {
@@ -104,7 +111,8 @@ export default {
             searchValue: state => state.document.searchValue,
             numOfResults: state => state.document.numOfResults,
             documents: state => state.document.documents,
-            documentsLoading: state => state.document.documentsLoading
+            documentsLoading: state => state.document.documentsLoading,
+            famSheet: state => state.document.familiarizationSheetForUser
         }),
         searchValue: {
             get() {
@@ -122,7 +130,8 @@ export default {
         }),
         ...mapActions({
             fetchDocuments: 'document/fetchDocuments',
-            fetchDocumentsV2: 'document/fetchDocumentsV2'
+            fetchDocumentsV2: 'document/fetchDocumentsV2',
+            fecthFamiliarizationSheetForUser: 'document/fecthFamiliarizationSheetForUser'
         }),
         searchDocuments() {
             this.isSearched = this.isSearched == true ? false : true
@@ -236,7 +245,7 @@ export default {
 .searchArea {
     display: flex;
     flex-direction: column;
-    width: 60%;
+    min-width: 60%;
     padding: 10px;
     padding: 10px 5%;
 }

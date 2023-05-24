@@ -2,26 +2,15 @@
     <div class="document">
         <div>
             <div class="title">
-                <router-link class="document_title" :to="`/smk/document/${document.id}`">
-                    <span v-html="document.code"></span>
+                <router-link class="document_title" :to="`/smk/document/${fam.document_id}`">
+                    <span v-html="fam.document_code"></span>
                     <span>&nbsp;</span>
-                    <span v-html="document.title"></span>
+                    <span v-html="fam.document_name"></span>
                 </router-link>
-                <my-button @click="deleteDocument" >Удалить</my-button>
             </div>
             
-            <!-- <my-button class="document_content" v-for="find in document.find" v-html="find.item"></my-button> -->
         </div>
-        <div class="document__btns">
-            <!-- <my-button @click="$router.push(`/smk/document/${document.id}`)">Открыть</my-button> -->
-            <!-- <my-button @click="$emit('remove', document)">Удалить</my-button> -->
-            <!-- <my-button @click="toFavorite">
-                <span v-if="isFavorite">Убрать из избранного</span>
-                <span v-else>Добавить в избранное</span>
-            </my-button> -->
 
-        </div>
-        <hr>
     </div>
 </template>
 
@@ -31,32 +20,44 @@ import authHeader from '@/services/auth-header';
 import { auth } from '@/store/auth.module'
 export default {
     props: {
-        document: {
+        fam: {
             type: Object,
             required: true
         }
     },
     data() {
         return {
-            isFavorite: this.document.isFavorite
         }
     },
     methods: {
-        async deleteDocument() {
+        async toFavorite() {
             try {
 
-                
+                let body = {
+                    document_id: this.document.id,
+                    user_id: auth.state.user.id
+                }
 
 
-                
-                    const response = await axios.delete('http://localhost:8080/api/v2/smk/deleteDocument?id=' + this.document.id, {
+                if (this.isFavorite) {
+                    const response = await axios.post('http://localhost:8080/api/v2/smk/deletefavorites', body, {
                         headers: authHeader()
                     })
 
                     if (response.status == 200) {
-                        console.log(response)
+                        this.isFavorite = this.isFavorite ? false : true
+                        this.document.isFavorite = this.document.isFavorite ? false : true
                     }
-               
+                } else {
+                    const response = await axios.post('http://localhost:8080/api/v2/smk/addfavorites', body, {
+                        headers: authHeader()
+                    })
+
+                    if (response.status == 200) {
+                        this.isFavorite = this.isFavorite ? false : true
+                        this.document.isFavorite = this.document.isFavorite ? false : true
+                    }
+                }
 
 
 
@@ -71,7 +72,16 @@ export default {
 </script>
 
 <style scoped>
-.btn-delete {
+.nofavorite {
+    background: url("@/../public/nofavorite.png");
+    background-size: contain;
+    height: 25px;
+    min-width: 25px;
+    cursor: pointer;
+    background-repeat: no-repeat;
+}
+
+.favorite {
     background: url("@/../public/favorite.png");
     background-size: contain;
     min-width: 25px;
@@ -79,8 +89,6 @@ export default {
     cursor: pointer;
     background-repeat: no-repeat;
 }
-
-
 
 .document {
     padding: 10px 0;

@@ -9,7 +9,8 @@ export const documentModule = {
         numOfResults: 0,
         documents: [],
         documentsLoading: false,
-        document: null
+        document: null,
+        familiarizationSheetForUser: []
     }),
     getters: {
         getDocumentById: (state) => (id) => {
@@ -17,6 +18,9 @@ export const documentModule = {
         },
         getDocument: (state) => {
             return state.document
+        },
+        getFamiliarizationSheetForUser: (state) => {
+            return state.familiarizationSheetForUser
         }
     },
     mutations: {
@@ -41,9 +45,27 @@ export const documentModule = {
         },
         setDocument(state, document) {
             state.document = document
+        },
+        setFamSheet(state, famSheet) {
+            state.familiarizationSheetForUser = famSheet
         }
     },
     actions: {
+        async fecthFamiliarizationSheetForUser({ state, commit }) {
+            try {
+                const response = await axios.get('http://localhost:8080/api/v2/smk/familiarizationForUser/' + auth.state.user.id,
+                    { headers: authHeader() }
+                )
+
+                if (response.status == 200) {
+                    console.log(response.data)
+                    commit('setFamSheet', response.data)
+                }
+            } catch (e) {
+                alert(e)
+                console.log(e)
+            }
+        },
         async getDocumentByIdWithHighlight({ state, commit }, doc_id) {
             try {
                 // commit('setSearched', false)
@@ -81,7 +103,8 @@ export const documentModule = {
                         appendix: [],
                         approval_sheet: [],
                         version: "",
-                        isFavorite: false
+                        isFavorite: false,
+                        isFamiliarize: false
                     }
 
 
@@ -151,7 +174,9 @@ export const documentModule = {
 
                     let isFavorite = response.data.favorite
 
-                    
+                    let isFamiliarize = response.data.familiarize
+
+
 
                     document.id = id;
                     document.code = code
@@ -164,10 +189,11 @@ export const documentModule = {
                     document.approval_sheet = approval_sheet
                     document.version = version
                     document.isFavorite = isFavorite
+                    document.isFamiliarize = isFamiliarize
 
-                    
 
-                    
+
+
 
                     commit('setDocument', document)
 
