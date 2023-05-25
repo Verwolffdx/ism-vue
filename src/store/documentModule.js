@@ -119,18 +119,41 @@ export const documentModule = {
                     let code = response.data.code
                     if (response.data.highlightFields?.code) {
                         code = response.data.highlightFields.code[0]
-                        response.data.highlightFields.code.forEach(code => find.push({ ref: id_item++, item: code }))
+                        response.data.highlightFields.code.forEach(code => find.push({ ref_id: "ref-id-" + id_item++, item: code }))
                     }
 
                     let title = response.data.name
                     if (response.data.highlightFields?.name) {
                         title = response.data.highlightFields.name[0]
-                        response.data.highlightFields.name.forEach(title => find.push({ ref: id_item++, item: title }))
+                        response.data.highlightFields.name.forEach(title => find.push({ ref_id: "ref-id-" + id_item++, item: title }))
                     }
 
 
 
-                    let content = response.data.content
+                    // let content = response.data.content
+                    let content = []
+                    response.data.content.forEach(item => {
+                        let chapter_title = item.chapter_title
+                        let ref_id = null
+
+
+
+                        let chapter = []
+                        item.chapter.forEach(chapter_content => {
+                            let chapter_item = {
+                                chapter_text: chapter_content,
+                                ref_id: ref_id
+                            }
+                            chapter.push(chapter_item)
+                        })
+
+
+                        content.push({
+                            chapter_title,
+                            chapter,
+                            ref_id
+                        })
+                    })
                     // if (response.data.highlightFields?.code) {
                     //     response.data.highlightFields.code.forEach(content => find.push({ ref: id_item++, item: content }))
                     // }
@@ -139,35 +162,55 @@ export const documentModule = {
                     // }
 
                     if (response.data.highlightFields?.["content.chapter"]) {
-                        response.data.highlightFields["content.chapter"].forEach(content => find.push({ ref: id_item++, item: content }))
+                        response.data.highlightFields["content.chapter"].forEach(content => find.push({ ref_id: "ref-id-" + id_item++, item: content }))
                     }
 
                     if (response.data.highlightFields?.["content.chapter_title"]) {
-                        response.data.highlightFields["content.chapter_title"].forEach(content => find.push({ ref: id_item++, item: content }))
+                        response.data.highlightFields["content.chapter_title"].forEach(content => find.push({ ref_id: "ref-id-" + id_item++, item: content }))
                     }
                     // // TODO Синхронизировать содержание документа и найденные элементы для скоролла к ним
-                    // // find.forEach(item => {
+                    find.forEach(find_item => {
 
-                    // // })
+                        let f_item = find_item.item.replace("<strong>", "")
+                        f_item = f_item.replace("</strong>", "")
+                        content.forEach(content_item => {
+
+                            if (content_item.chapter_title.includes(f_item)) {
+                                content_item.ref_id = find_item.ref_id
+                            }
+
+                            content_item.chapter.forEach(chapter_item => {
+                                if (chapter_item.chapter_text.includes(f_item)) {
+                                    chapter_item.ref_id = find_item.ref_id
+                                }
+                            })
+
+                        })
+                    })
+
+                    // content.forEach(content_item => {
+                    //     console.log(content_item.ref)
+                    // })
+
 
                     let date = response.data.date
                     if (response.data.highlightFields?.date) {
-                        response.data.highlightFields.date.forEach(date => find.push({ ref: id_item++, item: date }))
+                        response.data.highlightFields.date.forEach(date => find.push({ ref_id: "ref-id-" + id_item++, item: date }))
                     }
 
                     let links = response.data.links
                     if (response.data.highlightFields?.links) {
-                        response.data.highlightFields.links.forEach(links => find.push({ ref: id_item++, item: links }))
+                        response.data.highlightFields.links.forEach(links => find.push({ ref_id: "ref-id-" + id_item++, item: links }))
                     }
 
                     let appendix = response.data.appendix
                     if (response.data.highlightFields?.appendix) {
-                        response.data.highlightFields.appendix.forEach(appendix => find.push({ ref: id_item++, item: appendix }))
+                        response.data.highlightFields.appendix.forEach(appendix => find.push({ ref_id: "ref-id-" + id_item++, item: appendix }))
                     }
 
                     let approval_sheet = response.data.approval_sheet
                     if (response.data.highlightFields?.approval_sheet) {
-                        response.data.highlightFields.approval_sheet.forEach(approval_sheet => find.push({ ref: id_item++, item: approval_sheet }))
+                        response.data.highlightFields.approval_sheet.forEach(approval_sheet => find.push({ ref_id: "ref-id-" + id_item++, item: approval_sheet }))
                     }
 
                     let version = response.data.version

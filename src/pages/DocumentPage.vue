@@ -10,7 +10,7 @@
                     v-show="typeof this.document.find != undefined && this.document.find != null && this.document.find.length != null && this.document.find.length > 1">
                     <strong>Найденные элементы</strong>
                     <div class="hierarchy_item" v-for=" item in this.document.find ">
-                        <div v-html="item.item" :id="item.ref"></div>
+                        <div v-html="item.item"  @click="scroll(item.ref_id)"></div>
                     </div>
                 </div>
 
@@ -34,9 +34,11 @@
                     <div class="title_item">Версия {{ this.document.version }}</div>
                 </div>
                 <div class="title_item"> Дата введения {{ this.document.date }}</div>
-                <div class="document_content" v-for=" content  in  this.document.content ">
-                    <div class="chapter_title" v-html="content.chapter_title"></div>
-                    <div class="chapter" v-for=" ch  in  content.chapter " v-html="ch"></div>
+                <div class="document_content" v-for=" content  in  this.document.content">
+                    <div class="chapter_title" v-html="content.chapter_title" :id="content.ref_id" :class="{ 'find-el' : content.ref_id != null}"></div>
+                    <div class="chapter" v-for=" ch in content.chapter">
+                        <div v-html="ch.chapter_text" :id="ch.ref_id" :class="{ 'find-el' : ch.ref_id != null}"></div>
+                    </div>
                 </div>
 
                 <div class="appendix">
@@ -53,11 +55,13 @@
                     </div>
                 </div>
 
-                <div class="fam" ref="fam" v-if="!this.isFamiliarize">
+                <div class="fam" ref="fam1" v-if="!this.isFamiliarize">
                     <!-- <input class="fam-input" type="checkbox"> -->
                     <!-- <label class="fam-label"></label> -->
                     <my-button @click="this.showModal = true">Подтвердить ознакомление</my-button>
                 </div>
+
+                <!-- <div ref="7">ТЕСТ</div> -->
 
 
             </div>
@@ -70,7 +74,6 @@
             <template v-slot:header>Вы ознакомились с документом?</template>
             <template v-slot:footer>Да</template>
         </my-modal>
-
     </div>
 </template>
 <script>
@@ -111,12 +114,17 @@ export default {
             if (typeof this.document != undefined) {
                 this.loading = false
                 this.isFamiliarize = this.document.isFamiliarize
+                
             }
         }
     },
     methods: {
-        scroll() {
-            this.$refs["fam"].scrollIntoView({ behavior: "smooth" })
+        scroll(id) {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.scrollIntoView({ behavior: "smooth", block: "center" });
+
+                }
         },
         ...mapActions({
             getDocumentByIdWithHighlight: 'document/getDocumentByIdWithHighlight'
@@ -273,6 +281,10 @@ export default {
 }
 </script>
 <style scoped>
+.find-el {
+    /* color: yellow; */
+    background-color: yellow;
+}
 .header .logo {
     font-weight: 500;
     font-size: 24px;
