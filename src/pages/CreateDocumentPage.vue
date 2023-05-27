@@ -127,11 +127,18 @@ import DivisionsTree from "@/components/UI/DivisionsTree"
 import authHeader from "@/services/auth-header";
 import fileHeader from "@/services/file-header"
 import axios from 'axios'
+import { mapState, mapActions, mapMutations, mapGetters } from 'vuex'
 export default {
     components: { DocumentInput, DocumentTextarea, AdminPanel, MyModal, DivisionsTree },
+    // props: {
+    //     documentFull: {
+    //         type: Object,
+    //         required: true
+    //     }
+    // },
     data() {
         return {
-            divisionsArray: [],
+            divisionsArray: [1, 2, 3],
             showModal: false,
             //Количество глав
             count_chapter: 0,
@@ -177,8 +184,52 @@ export default {
     },
     mounted() {
         // this.addChapter()
+        if (this.documentFull != null) {
+            
+
+            this.document.name = this.documentFull.title
+            this.document.code = this.documentFull.code
+            this.document.date = this.documentFull.date
+            this.document.version = this.documentFull.version
+
+            let content = []
+            for (let i = 0; i < this.documentFull.content.length; i++) {
+                let chapter_item = []
+                this.documentFull.content[i].chapter.forEach(item => {
+                    chapter_item.push(item.chapter_text)
+                })
+                content.push({
+                        chapter_title: this.documentFull.content[i].chapter_title,
+                        chapter: chapter_item
+                    })
+            }
+            this.document.content = content
+
+            let appendix = []
+            for (let i = 0; i < this.documentFull.appendix.length; i++) {
+                this.document.appendix = this.documentFull.appendix
+                appendix.push({
+                    appendix: this.documentFull.appendix[i]
+                })
+            }
+            this.document.appendix = appendix
+
+            this.document.approval_sheet = this.documentFull.approval_sheet
+            this.document.links = this.documentFull.links
+        }
+    },
+    computed: {
+        ...mapGetters({
+            // document: 'document/getDocumentById'
+            documentFull: 'document/getDocument'
+        })
+
     },
     methods: {
+        ...mapActions({
+            getDocumentByIdWithHighlight: 'document/getDocumentByIdWithHighlight',
+            getDocumentFile: 'document/getDocumentFile'
+        }),
         addDivision(item) {
             if (this.divisionsArray.includes(item.id)) {
                 this.divisionsArray = this.divisionsArray.filter(e => e !== item.division_id)

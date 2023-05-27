@@ -25,7 +25,7 @@
             </div>
             <div class="documentArea">
                 <div class="buttons">
-                    <my-button>Редактировать</my-button>
+                    <my-button @click="this.$router.push('/admin/edit/' + document.id)">Редактировать</my-button>
                     <my-button @click="getDocumentFile(this.$route.params.id)">Скачать</my-button>
                 </div>
                 <div class="title_list">

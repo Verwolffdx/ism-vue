@@ -1,7 +1,7 @@
 import Main from "@/pages/Main"
 import AuthorizationPage from "@/pages/AutorizationPage"
 import DocumentPage from "@/pages/DocumentPage"
-import CreateDocomentPage from "@/pages/CreateDocumentPage"
+import CreateDocumentPage from "@/pages/CreateDocumentPage"
 import LoginComponent from '@/pages/Login'
 import RegisterComponent from '@/pages/Register'
 import AdminPage from '@/pages/AdminPage'
@@ -33,7 +33,19 @@ const routes = [
     },
     {
         path: '/admin/create',
-        component: CreateDocomentPage,
+        component: CreateDocumentPage,
+        meta: { requiresAuth: true },
+        beforeEnter(to, from, next) {
+            if (!auth.state.user.roles.includes('ROLE_ADMIN')) {
+                next(from.path)
+            } else {
+                next()
+            }
+        }
+    },
+    {
+        path: '/admin/edit/:id',
+        component: CreateDocumentPage,
         meta: { requiresAuth: true },
         beforeEnter(to, from, next) {
             if (!auth.state.user.roles.includes('ROLE_ADMIN')) {
