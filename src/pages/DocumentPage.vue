@@ -26,7 +26,7 @@
             <div class="documentArea">
                 <div class="buttons">
                     <my-button>Редактировать</my-button>
-                    <my-button>Скачать</my-button>
+                    <my-button @click="getDocumentFile(this.$route.params.id)">Скачать</my-button>
                 </div>
                 <div class="title_list">
                     <div class="title_item" v-html="this.document.title"></div>
@@ -127,7 +127,8 @@ export default {
                 }
         },
         ...mapActions({
-            getDocumentByIdWithHighlight: 'document/getDocumentByIdWithHighlight'
+            getDocumentByIdWithHighlight: 'document/getDocumentByIdWithHighlight',
+            getDocumentFile: 'document/getDocumentFile'
         }),
         async confirmFamiliarize() {
             try {

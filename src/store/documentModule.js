@@ -51,6 +51,47 @@ export const documentModule = {
         }
     },
     actions: {
+        async getDocumentFile({ state, commit }, doc_id) {
+            try {
+                const response = await axios.get('http://localhost:8080/api/v2/smk/file/' + doc_id,
+                    { 
+                        headers: authHeader(),
+                        responseType: 'blob'
+                    }
+                )
+
+                if (response.status == 200) {
+                    // console.log(response.data)
+
+                    // let blob = new Blob([response.data], { type: 'application/pdf' })
+
+                    // const url = window.URL.createObjectURL(blob);
+                    // const a = document.createElement("a");
+                    // a.style.display = "none";
+                    // a.href = url;
+                    // a.download = "file.pdf";
+                    // document.body.appendChild(a);
+                    // a.click();
+                    // window.URL.revokeObjectURL(url);
+
+                    // window.open(url);
+
+
+                    // console.log(title)
+
+                    const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/msword' }))
+                    const link = document.createElement('a')
+                    link.href = url
+                    let title  = 'document.doc'
+                    link.setAttribute('download', title)
+                    document.body.appendChild(link)
+                    link.click()
+                }
+            } catch (e) {
+                alert(e)
+                console.log(e)
+            }
+        },
         async fecthFamiliarizationSheetForUser({ state, commit }) {
             try {
                 const response = await axios.get('http://localhost:8080/api/v2/smk/familiarizationForUser/' + auth.state.user.id,

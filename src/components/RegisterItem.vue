@@ -7,9 +7,9 @@
                     <span>&nbsp;</span>
                     <span v-html="document.title"></span>
                 </router-link>
-                <my-button @click="deleteDocument" >Удалить</my-button>
+                <my-button @click="deleteDocument">Удалить</my-button>
             </div>
-            
+
             <!-- <my-button class="document_content" v-for="find in document.find" v-html="find.item"></my-button> -->
         </div>
         <div class="document__btns">
@@ -44,24 +44,13 @@ export default {
     methods: {
         async deleteDocument() {
             try {
+                const response = await axios.delete('http://localhost:8080/api/v2/smk/deleteDocument?id=' + this.document.id, {
+                    headers: authHeader()
+                })
 
-                
-
-
-                
-                    const response = await axios.delete('http://localhost:8080/api/v2/smk/deleteDocument?id=' + this.document.id, {
-                        headers: authHeader()
-                    })
-
-                    if (response.status == 200) {
-                        console.log(response)
-                    }
-               
-
-
-
-
-
+                if (response.status == 200) {
+                    console.log(response)
+                }
             } catch (e) {
                 console.log(e)
             }

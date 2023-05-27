@@ -10,9 +10,12 @@
             <div class="createArea">
                 <span class="createTitle">Создать документ</span>
 
+                <hr>
                 <div class="field">
-                    <input type="file" ref="file">
-                    <my-button @click="sendFileToParse">Загрузить файл</my-button>
+                    <span class="input_title">Загрузить оригинал</span>
+                    <input type="file" ref="original">
+                    <!-- <my-button @click="sendFileToParse">Загрузить оригинал</my-button> -->
+
                 </div>
                 <hr>
 
@@ -35,6 +38,10 @@
                     </div>
                     <hr>
                     <span class="input_title">Содержание</span>
+                    <div class="field">
+                        <input type="file" ref="file">
+                        <my-button @click="sendFileToParse">Считать файл</my-button>
+                    </div>
                     <div v-for="content in document.content">
                         <document-input :key="content.id" v-model:input-value="content.chapter_title">
                             Название главы:
@@ -103,7 +110,7 @@
             </div>
 
             <!-- Модальное окно -->
-            <my-modal v-if="showModal" @close="this.showModal = false">
+            <my-modal v-if="showModal" @close="this.$router.push('/smk/document/' + this.document_id)">
                 <template v-slot:header>Документ успешно создан</template>
             </my-modal>
 
@@ -233,6 +240,7 @@ export default {
             this.sendDoc()
         },
 
+
         //Отправка файла для парсинга и получения содержимого документа (название глав и их содержание)
         async sendFileToParse() {
             try {
@@ -264,7 +272,34 @@ export default {
                     document: this.document,
                     divisions: this.divisionsArray
                 }
-                const response = await axios.post('http://localhost:8080/api/v2/smk/create', body, { headers: authHeader() })
+
+                let originalFile = this.$refs.original.files[0];
+
+                let formData = new FormData();
+
+                // formData.append("document", JSON.stringify(body))
+                // formData.append("file", originalFile);
+
+                formData.append('document', new Blob([JSON.stringify(body)], {
+                    type: "application/json"
+                }));
+
+                // const fr = new FileReader()
+                // fr.readAsArrayBuffer(originalFile)
+                formData.append(
+                    'file',
+                    new Blob([originalFile], {
+                        type: "multipart/form-data"
+                    }),
+                    originalFile.name
+                );
+
+
+
+                const response = await axios.post('http://localhost:8080/api/v2/smk/create',
+                    formData,
+                    { headers: fileHeader() }
+                )
 
                 if (response.status == 200) {
                     console.log(response)
