@@ -19,14 +19,14 @@
                 <hr>
                 <strong>Связанные документы</strong>
                 <div class="hierarchy_item" v-for=" link  in  this.document.links ">
-                    <div v-html="link.link_name"></div>
+                    <a class="link" v-html="link.link_name" :href="link.link" target="_blank"></a>
                 </div>
 
             </div>
             <div class="documentArea">
                 <div class="buttons">
                     <my-button @click="this.$router.push('/admin/edit/' + document.id)">Редактировать</my-button>
-                    <my-button @click="getDocumentFile(this.$route.params.id)">Скачать</my-button>
+                    <my-button @click="getDocumentFile(this.$route.params.id)">Скачать оригинал</my-button>
                 </div>
                 <div class="title_list">
                     <div class="title_item" v-html="this.document.title"></div>
@@ -42,8 +42,11 @@
                 </div>
 
                 <div class="appendix">
-                    <span class="chapter_title">Приложение</span>
-                    <div v-for=" appendix  in  this.document.appendix " v-html="appendix"></div>
+                    <span class="chapter_title">Приложения</span>
+                    <div v-for=" appendix  in  this.document.appendix ">
+                        <div v-html="appendix"></div>
+                        <my-button @click="getTemplateFile(appendix)">Скачать</my-button>
+                    </div>
                 </div>
 
                 <div class="approval_sheet">
@@ -128,7 +131,8 @@ export default {
         },
         ...mapActions({
             getDocumentByIdWithHighlight: 'document/getDocumentByIdWithHighlight',
-            getDocumentFile: 'document/getDocumentFile'
+            getDocumentFile: 'document/getDocumentFile',
+            getTemplateFile: 'document/getTemplateFile'
         }),
         async confirmFamiliarize() {
             try {
@@ -404,6 +408,15 @@ export default {
 .fam-input {
     transform: scale(1.5);
     margin-right: 10px;
+}
+
+.link {
+    color: black;
+    text-decoration: none;
+}
+
+.link:hover {
+    text-decoration: underline;
 }
 
 hr {

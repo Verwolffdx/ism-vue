@@ -2,6 +2,7 @@ import Main from "@/pages/Main"
 import AuthorizationPage from "@/pages/AutorizationPage"
 import DocumentPage from "@/pages/DocumentPage"
 import CreateDocumentPage from "@/pages/CreateDocumentPage"
+import EditDocumentPage from "@/pages/EditDocumentPage"
 import LoginComponent from '@/pages/Login'
 import RegisterComponent from '@/pages/Register'
 import AdminPage from '@/pages/AdminPage'
@@ -45,7 +46,7 @@ const routes = [
     },
     {
         path: '/admin/edit/:id',
-        component: CreateDocumentPage,
+        component: EditDocumentPage,
         meta: { requiresAuth: true },
         beforeEnter(to, from, next) {
             if (!auth.state.user.roles.includes('ROLE_ADMIN')) {

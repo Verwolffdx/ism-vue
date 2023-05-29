@@ -51,6 +51,69 @@ export const documentModule = {
         }
     },
     actions: {
+        async getTemplateFile({ state, commit }, template_name) {
+            try {
+
+                // axios({
+                //     method: 'get',
+                //     url: 'https://myapi.com/files/4hjiguo4ho45946794526975429',
+                //     responseType: 'stream'
+                // })
+                //     .then(function (response) {
+                //         let headerLine = response.data.headers['content-disposition'];
+                //         let headerLine = response.headers['Content-Disposition'];
+                //         let startFileNameIndex = headerLine.indexOf('"') + 1
+                //         let endFileNameIndex = headerLine.lastIndexOf('"');
+                //         let filename = headerLine.substring(startFileNameIndex, endFileNameIndex);
+                //         response.data.pipe(fs.createWriteStream(filename));
+                //     });
+
+                const response = await axios.get('http://localhost:8080/api/v2/smk/template/' + template_name,
+                    {
+                        headers: authHeader(),
+                        responseType: 'blob'
+                    }
+                )
+
+
+
+                if (response.status == 200) {
+                    // console.log(response.data)
+
+                    // let blob = new Blob([response.data], { type: 'application/pdf' })
+
+                    // const url = window.URL.createObjectURL(blob);
+                    // const a = document.createElement("a");
+                    // a.style.display = "none";
+                    // a.href = url;
+                    // a.download = "file.pdf";
+                    // document.body.appendChild(a);
+                    // a.click();
+                    // window.URL.revokeObjectURL(url);
+
+                    // window.open(url);
+
+
+                    // console.log(title)
+
+
+                    const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/msword' }))
+                    const link = document.createElement('a')
+                    link.href = url
+
+                    var contentDisposition = response.headers["content-disposition"];
+                    var match = contentDisposition.match(/filename\s*=\s*"(.+)"/i);
+                    var filename = match[1];
+                    
+                    link.setAttribute('download', filename)
+                    document.body.appendChild(link)
+                    link.click()
+                }
+            } catch (e) {
+                alert(e)
+                console.log(e)
+            }
+        },
         async getDocumentFile({ state, commit }, doc_id) {
             try {
 

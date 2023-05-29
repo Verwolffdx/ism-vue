@@ -8,7 +8,7 @@
             </div> -->
             <admin-panel></admin-panel>
             <div class="createArea">
-                <span class="createTitle">Создать документ</span>
+                <span class="createTitle">Редактирование документа</span>
 
                 <hr>
                 <div class="field">
@@ -59,17 +59,7 @@
                     <document-input v-for="appendix in document.appendix" :key="appendix.id"
                         v-model:input-value="appendix.appendix">
                         Приложение:
-                        <template v-slot:template>
-                            
-                            <div class="field">
-                                <span class="input_title">Загрузить файл приложения</span>
-                                <input type="file" ref="template">
-                            </div>
-
-                        </template>
-
                     </document-input>
-
 
                     <div class="field">
                         <my-button class="button" @click="addAppendix">Добавить приложение</my-button>
@@ -156,37 +146,38 @@ export default {
             document_id: "",
             //Модель документа
             document: {
-                name: "Приложения 1",
-                code: "ПРИЛ-1",
-                version: "1",
-                date: "2023-05-29",
+                id: "",
+                name: "",
+                code: "",
+                version: "",
+                date: "",
                 content: [
                     {
                         id: 0,
-                        chapter_title: "Глава 1",
-                        chapter: ["qwe123"]
+                        chapter_title: "",
+                        chapter: []
                     }
                 ],
                 appendix: [
                     {
                         id: 0,
-                        appendix: "Приложение А"
+                        appendix: ""
                     }
                 ],
                 links: [
                     {
                         id: 0,
-                        link_name: "Док 1",
-                        link: "/"
+                        link_name: "",
+                        link: ""
                     }
 
                 ],
                 approval_sheet: [
                     {
                         id: 0,
-                        type_of_approval: "Соглас",
-                        fio: "мной",
-                        position: "студент"
+                        type_of_approval: "",
+                        fio: "",
+                        position: ""
                     }
                 ]
             },
@@ -195,7 +186,7 @@ export default {
     mounted() {
         // this.addChapter()
         if (this.documentFull != null) {
-
+            
 
             this.document.name = this.documentFull.title
             this.document.code = this.documentFull.code
@@ -209,9 +200,9 @@ export default {
                     chapter_item.push(item.chapter_text)
                 })
                 content.push({
-                    chapter_title: this.documentFull.content[i].chapter_title,
-                    chapter: chapter_item
-                })
+                        chapter_title: this.documentFull.content[i].chapter_title,
+                        chapter: chapter_item
+                    })
             }
             this.document.content = content
 
@@ -329,20 +320,13 @@ export default {
         //Отправка документа для сохранения
         async sendDoc() {
             try {
+                this.document.id = this.$route.params.id
                 let body = {
                     document: this.document,
                     divisions: this.divisionsArray
                 }
 
                 let originalFile = this.$refs.original.files[0];
-
-                let templates = []
-
-                this.$refs.template.forEach(item => {
-                    templates.push(item.files[0])
-                })
-
-                
 
                 let formData = new FormData();
 
@@ -362,35 +346,10 @@ export default {
                     }),
                     originalFile.name
                 );
-                
-
-                // let blobArray = []
-                // templates.forEach(item => {
-                //     blobArray.push(new Blob([item], {
-                //         type: "multipart/form-data"
-                //     }))
-                // })
-
-                // formData.append(
-                //     'templates',
-                //     blobArray
-                // );
-
-                this.$refs.template.forEach(item => {
-                    formData.append(
-                    'templates',
-                    new Blob([item.files[0]], {
-                        type: "multipart/form-data"
-                    }),
-                    item.files[0].name
-                );
-                })
-
-                
 
 
 
-                const response = await axios.post('http://localhost:8080/api/v2/smk/create',
+                const response = await axios.post('http://localhost:8080/api/v2/smk/update',
                     formData,
                     { headers: fileHeader() }
                 )

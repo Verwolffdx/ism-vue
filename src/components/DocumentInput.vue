@@ -2,7 +2,9 @@
     <div class="document-input">
       <span v-if="isShowTitle" class="document-input__title"><slot/></span>
       <my-input class="input" v-model="inputModel"/>
+    
     </div>
+    <slot name="template"></slot>
   </template>
   
   <script>
