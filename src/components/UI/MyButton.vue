@@ -18,4 +18,9 @@ export default {
     border: 1px solid black;
     border-radius: 5px;
 }
+
+.btn:hover {
+    background-color: aliceblue;
+    cursor: pointer;
+}
 </style>

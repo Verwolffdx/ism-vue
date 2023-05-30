@@ -8,6 +8,7 @@ import RegisterComponent from '@/pages/Register'
 import AdminPage from '@/pages/AdminPage'
 import FavoritesPage from '@/pages/FavoritesPage'
 import RegisterOfDocumentsPage from '@/pages/RegisterOfDocumentsPage'
+import RegisterOfAppendixesPage from '@/pages/RegisterOfAppendixesPage'
 import { createRouter, createWebHistory } from "vue-router"
 import { auth } from '@/store/auth.module'
 
@@ -88,6 +89,18 @@ const routes = [
     {
         path: "/admin/docregister",
         component: RegisterOfDocumentsPage,
+        meta: { requiresAuth: false },
+        beforeEnter(to, from, next) {
+            if (!auth.state.user.roles.includes('ROLE_ADMIN')) {
+                next(from.path)
+            } else {
+                next()
+            }
+        }
+    },
+    {
+        path: "/admin/templates",
+        component: RegisterOfAppendixesPage,
         meta: { requiresAuth: false },
         beforeEnter(to, from, next) {
             if (!auth.state.user.roles.includes('ROLE_ADMIN')) {

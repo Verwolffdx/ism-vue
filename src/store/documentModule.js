@@ -10,7 +10,8 @@ export const documentModule = {
         documents: [],
         documentsLoading: false,
         document: null,
-        familiarizationSheetForUser: []
+        familiarizationSheetForUser: [],
+        templates: []
     }),
     getters: {
         getDocumentById: (state) => (id) => {
@@ -48,9 +49,64 @@ export const documentModule = {
         },
         setFamSheet(state, famSheet) {
             state.familiarizationSheetForUser = famSheet
+        },
+        setTemplates(state, templates) {
+            state.templates = templates
         }
     },
     actions: {
+        async searchTemplates({ state, commit }, searchValue) {
+            try {
+                commit('setSearched', false)
+                commit('setLoading', true)
+                
+                
+                const response = await axios.get('http://localhost:8080/api/v2/smk/findtemplates/' + searchValue,
+                    {
+                        headers: authHeader()
+                    })
+
+                if (response.status == 200) {
+                    commit('setSearched', true)
+                    console.log(response.data)
+
+                    let templatesArray = []
+
+                    console.log("ДО")
+                    response.data.forEach(item => {
+                        console.log(item)
+                        item.highlightFields.appendix.forEach(template => {
+                            console.log(template)
+                            templatesArray.push({
+                                template_name: template,
+                                document_id: item.documentId,
+                                document_code: item.documentCode,
+                                document_name: item.documentName
+                            })
+                            // templatesArray.push({
+                            //     template_name: template,
+                            //     document_id: item.documentId,
+                            //     document_code: item.documentCode,
+                            //     document_name: documentName
+                            // })
+                        })
+                    })
+                    console.log("ПОСЛЕ")
+
+                    console.log(templatesArray)
+
+                    commit('setNumOfResults', templatesArray.length)
+                    commit('setTemplates', templatesArray)
+                }
+
+            } catch (e) {
+                alert(e)
+                console.log(e)
+            } finally {
+                
+                commit('setLoading', false)
+            }
+        },
         async getTemplateFile({ state, commit }, template_name) {
             try {
 
@@ -104,7 +160,7 @@ export const documentModule = {
                     var contentDisposition = response.headers["content-disposition"];
                     var match = contentDisposition.match(/filename\s*=\s*"(.+)"/i);
                     var filename = match[1];
-                    
+
                     link.setAttribute('download', filename)
                     document.body.appendChild(link)
                     link.click()
@@ -167,7 +223,7 @@ export const documentModule = {
                     var contentDisposition = response.headers["content-disposition"];
                     var match = contentDisposition.match(/filename\s*=\s*"(.+)"/i);
                     var filename = match[1];
-                    
+
                     link.setAttribute('download', filename)
                     document.body.appendChild(link)
                     link.click()
