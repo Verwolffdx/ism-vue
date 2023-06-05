@@ -9,6 +9,7 @@ import AdminPage from '@/pages/AdminPage'
 import FavoritesPage from '@/pages/FavoritesPage'
 import RegisterOfDocumentsPage from '@/pages/RegisterOfDocumentsPage'
 import RegisterOfAppendixesPage from '@/pages/RegisterOfAppendixesPage'
+import DocsByHierarchy from '@/pages/DocsByHierarchy'
 import { createRouter, createWebHistory } from "vue-router"
 import { auth } from '@/store/auth.module'
 
@@ -87,28 +88,33 @@ const routes = [
         }
     },
     {
-        path: "/admin/docregister",
+        path: "/smk/all",
         component: RegisterOfDocumentsPage,
         meta: { requiresAuth: false },
-        beforeEnter(to, from, next) {
-            if (!auth.state.user.roles.includes('ROLE_ADMIN')) {
-                next(from.path)
-            } else {
-                next()
-            }
-        }
+        // beforeEnter(to, from, next) {
+        //     if (!auth.state.user.roles.includes('ROLE_ADMIN')) {
+        //         next(from.path)
+        //     } else {
+        //         next()
+        //     }
+        // }
     },
     {
-        path: "/admin/templates",
+        path: "/smk/templates",
         component: RegisterOfAppendixesPage,
         meta: { requiresAuth: false },
-        beforeEnter(to, from, next) {
-            if (!auth.state.user.roles.includes('ROLE_ADMIN')) {
-                next(from.path)
-            } else {
-                next()
-            }
-        }
+        // beforeEnter(to, from, next) {
+        //     if (!auth.state.user.roles.includes('ROLE_ADMIN')) {
+        //         next(from.path)
+        //     } else {
+        //         next()
+        //     }
+        // }
+    },
+    {
+        path: "/smk/documents/:type",
+        component: DocsByHierarchy,
+        meta: { requiresAuth: false }
     }
 ]
 

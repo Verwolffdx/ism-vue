@@ -88,7 +88,7 @@ export default {
     border-color: black;
 }
 
-.header .logo {
+.logo {
     font-weight: 500;
     font-size: 24px;
     line-height: 24px;
@@ -106,6 +106,7 @@ export default {
     align-items: center;
     height: 70px;
     border-bottom: 1px solid black;
+    min-width: 100%;
 }
 
 .profile {

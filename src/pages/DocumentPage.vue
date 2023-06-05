@@ -5,21 +5,32 @@
         <div v-if="!this.loading" class="workArea font-normal">
             <div class="hierarchy">
                 <!-- <hierarchy></hierarchy> -->
-                <my-button @click="scroll()">Подтвердить ознакомление</my-button>
+                <my-button @click="scroll()" v-if="!this.isFamiliarize">Подтвердить ознакомление</my-button>
                 <div
                     v-show="typeof this.document.find != undefined && this.document.find != null && this.document.find.length != null && this.document.find.length > 1">
                     <strong>Найденные элементы</strong>
                     <div class="hierarchy_item" v-for=" item in this.document.find ">
-                        <div v-html="item.item"  @click="scroll(item.ref_id)"></div>
+                        <div v-html="item.item" @click="scroll(item.ref_id)"></div>
                     </div>
+                    <hr>
                 </div>
 
-
-
-                <hr>
-                <strong>Связанные документы</strong>
-                <div class="hierarchy_item" v-for=" link  in  this.document.links ">
-                    <a class="link" v-html="link.link_name" :href="link.link" target="_blank"></a>
+                <div>
+                    <strong>Связанные документы</strong>
+                    <div class="hierarchy_item" v-for=" link in this.document.links ">
+                        <a class="link" v-html="link.link_name" :href="link.link" target="_blank"></a>
+                    </div>
+                    <hr>
+                </div>
+                <div>
+                    <strong>Связанные шаблоны</strong>
+                    <div class="hierarchy_item" v-for=" appendix  in  this.document.appendix ">
+                        <div class="appendix_item">
+                            <div v-html="appendix"></div>
+                            <!-- <div v-html="item.item"  @click="scroll(item.ref_id)"></div> -->
+                            <div class="download" @click="getTemplateFile(appendix)"></div>
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -27,6 +38,12 @@
                 <div class="buttons">
                     <my-button @click="this.$router.push('/admin/edit/' + document.id)">Редактировать</my-button>
                     <my-button @click="getDocumentFile(this.$route.params.id)">Скачать оригинал</my-button>
+
+                    <my-button v-if="!this.isFavorite" @click="toFavorite">Добавить избранное</my-button>
+
+                    <my-button v-if="this.isFavorite" @click="toFavorite">Удалить из избранного</my-button>
+
+
                 </div>
                 <div class="title_list">
                     <div class="title_item" v-html="this.document.title"></div>
@@ -35,9 +52,10 @@
                 </div>
                 <div class="title_item"> Дата введения {{ this.document.date }}</div>
                 <div class="document_content" v-for=" content  in  this.document.content">
-                    <div class="chapter_title" v-html="content.chapter_title" :id="content.ref_id" :class="{ 'find-el' : content.ref_id != null}"></div>
+                    <div class="chapter_title" v-html="content.chapter_title" :id="content.ref_id"
+                        :class="{ 'find-el': content.ref_id != null }"></div>
                     <div class="chapter" v-for=" ch in content.chapter">
-                        <div v-html="ch.chapter_text" :id="ch.ref_id" :class="{ 'find-el' : ch.ref_id != null}"></div>
+                        <div v-html="ch.chapter_text" :id="ch.ref_id" :class="{ 'find-el': ch.ref_id != null }"></div>
                     </div>
                 </div>
 
@@ -95,6 +113,7 @@ export default {
             showModal: false,
             loading: true,
             isFamiliarize: false,
+            isFavorite: false,
         }
     },
     beforeMount() {
@@ -117,17 +136,17 @@ export default {
             if (typeof this.document != undefined) {
                 this.loading = false
                 this.isFamiliarize = this.document.isFamiliarize
-                
+                this.isFavorite = this.document.isFavorite
             }
         }
     },
     methods: {
         scroll(id) {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.scrollIntoView({ behavior: "smooth", block: "center" });
+            const el = document.getElementById(id);
+            if (el) {
+                el.scrollIntoView({ behavior: "smooth", block: "center" });
 
-                }
+            }
         },
         ...mapActions({
             getDocumentByIdWithHighlight: 'document/getDocumentByIdWithHighlight',
@@ -136,16 +155,6 @@ export default {
         }),
         async confirmFamiliarize() {
             try {
-
-
-                // const response = await axios.get('http://localhost:8080/api/v2/smk/confirmFamiliarization?user_id=' + auth.state.user.id + "&document_id=" + this.document.id,
-                //     { headers: authHeader() }
-                // )
-
-                // const response = await axios.put('http://localhost:8080/api/v2/smk/confirmFamiliarization?user_id=' + auth.state.user.id + "&document_id=" + this.document.id,
-                //     { headers: authHeader() }
-                // )
-
                 const response = await axios({
                     headers: authHeader(),
                     method: "put",
@@ -165,115 +174,44 @@ export default {
                 this.isFamiliarize = !this.isFamiliarize
             }
 
+        },
+        async toFavorite() {
+            try {
+
+                let body = {
+                    document_id: this.document.id,
+                    user_id: auth.state.user.id
+                }
+
+
+                if (this.isFavorite) {
+                    const response = await axios.post('http://localhost:8080/api/v2/smk/deletefavorites', body, {
+                        headers: authHeader()
+                    })
+
+                    if (response.status == 200) {
+                        this.isFavorite = this.isFavorite ? false : true
+                        this.document.isFavorite = this.document.isFavorite ? false : true
+                    }
+                } else {
+                    const response = await axios.post('http://localhost:8080/api/v2/smk/addfavorites', body, {
+                        headers: authHeader()
+                    })
+
+                    if (response.status == 200) {
+                        this.isFavorite = this.isFavorite ? false : true
+                        this.document.isFavorite = this.document.isFavorite ? false : true
+                    }
+                }
+
+
+
+
+
+            } catch (e) {
+                console.log(e)
+            }
         }
-        // async getDocumentById() {
-        //     try {
-
-
-        //         let body = {
-        //             document_id: this.$route.params.id,
-        //             // value: state.searchValue,
-        //             user_id: auth.state.user.id,
-        //         }
-
-        //         const response = await axios.post('http://localhost:8080/api/v2/smk/document', body,
-        //             { headers: authHeader() },
-        //         )
-        //         // console.log(response.request)
-        //         // console.log(response.data)
-
-        //         if (response.status === 200) {
-
-
-        //             // console.log(response.data)
-
-        //             // response.data.forEach(e => {
-        //             let find = []
-        //             let id_item = 0
-
-        //             let id = response.data.id
-        //             let code = response.data.code
-        //             if (response.data.highlightFields?.code) {
-        //                 code = response.data.highlightFields.code[0]
-        //             }
-        //             let title = response.data.name
-        //             if (response.data.highlightFields?.name) {
-        //                 title = response.data.highlightFields.name[0]
-        //             }
-
-
-        //             // if (e.highlightFields?.appendix) {
-        //             //     e.highlightFields.appendix.forEach(appendix => find.push({ ref: id_item++, item: appendix }))
-        //             // }
-
-        //             let content = response.data.content
-        //             if (response.data.highlightFields?.code) {
-        //                 response.data.highlightFields.code.forEach(content => find.push({ ref: id_item++, item: content }))
-        //             }
-        //             if (response.data.highlightFields?.name) {
-        //                 response.data.highlightFields.name.forEach(content => find.push({ ref: id_item++, item: content }))
-        //             }
-
-        //             if (response.data.highlightFields?.["content.chapter"]) {
-        //                 response.data.highlightFields["content.chapter"].forEach(content => find.push({ ref: id_item++, item: content }))
-        //             }
-
-        //             if (response.data.highlightFields?.["content.chapter_title"]) {
-        //                 response.data.highlightFields["content.chapter_title"].forEach(content => find.push({ ref: id_item++, item: content }))
-        //             }
-        //             // TODO Синхронизировать содержание документа и найденные элементы для скоролла к ним
-        //             // find.forEach(item => {
-
-        //             // })
-
-        //             let date = response.data.date
-        //             if (response.data.highlightFields?.date) {
-        //                 response.data.highlightFields.date.forEach(date => find.push({ ref: id_item++, item: date }))
-        //             }
-
-        //             let links = response.data.links
-        //             if (response.data.highlightFields?.links) {
-        //                 response.data.highlightFields.links.forEach(links => find.push({ ref: id_item++, item: links }))
-        //             }
-
-        //             let appendix = response.data.appendix
-        //             if (response.data.highlightFields?.appendix) {
-        //                 response.data.highlightFields.appendix.forEach(appendix => find.push({ ref: id_item++, item: appendix }))
-        //             }
-
-        //             let approval_sheet = response.data.approval_sheet
-        //             if (response.data.highlightFields?.approval_sheet) {
-        //                 response.data.highlightFields.approval_sheet.forEach(approval_sheet => find.push({ ref: id_item++, item: approval_sheet }))
-        //             }
-
-        //             let version = response.data.version
-
-        //             let isFavorite = response.data.favorite
-
-        //             this.document = {
-        //                 id,
-        //                 code,
-        //                 title,
-        //                 content,
-        //                 find,
-        //                 date,
-        //                 links,
-        //                 appendix,
-        //                 approval_sheet,
-        //                 version,
-        //                 isFavorite
-        //             }
-
-
-        //         }
-        //     } catch (e) {
-        //         alert(e)
-        //         console.log(e)
-
-        //     } finally {
-
-        //     }
-        // }
     },
     computed: {
         ...mapGetters({
@@ -286,10 +224,27 @@ export default {
 }
 </script>
 <style scoped>
+.appendix_item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.download {
+    background: url("@/../public/download.png");
+    background-size: contain;
+    height: 25px;
+    min-width: 25px;
+    cursor: pointer;
+    background-repeat: no-repeat;
+    margin-left: 5px;
+}
+
 .find-el {
     /* color: yellow; */
     background-color: yellow;
 }
+
 .header .logo {
     font-weight: 500;
     font-size: 24px;
@@ -347,8 +302,8 @@ export default {
 .documentArea {
     display: flex;
     flex-direction: column;
-    /* width: %; */
-    max-width: 1350px;
+    width: 100em;
+    min-width: 30em;
     padding: 10px;
     padding: 10px 5%;
     font-size: 20px;

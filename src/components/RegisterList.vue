@@ -1,7 +1,7 @@
 <template>
     <div class="favorites">
         <div v-if="documents.length > 0">
-            <p class="fav-title">Документы</p>
+            <!-- <p class="fav-title">Документы</p> -->
             <register-item :document="document" v-for="document in documents" :key="document.id" />
         </div>
     </div>

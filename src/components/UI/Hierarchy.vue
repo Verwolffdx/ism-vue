@@ -1,7 +1,12 @@
 <template>
     <div>
-        <ul id="demo" v-for="item in hierarchy.children">
-            <hierarchy-item class="hierarchy_item" :item="item"></hierarchy-item>
+        <ul>
+            <li><router-link class="hierarchy_item" to="/smk/documents/standarts">Стандарты организации</router-link></li>
+            <li><router-link class="hierarchy_item" to="/smk/documents/regulations">Положения общеуниверситетские</router-link></li>
+            <li><router-link class="hierarchy_item" to="/smk/documents/methodics">Инструкции</router-link></li>
+            <li><router-link class="hierarchy_item" to="/smk/documents/methrek">Методические рекомендации</router-link></li>
+            <li><router-link class="hierarchy_item" to="/smk/documents/all">Реестр нормативных документов ИСМ</router-link></li>
+            <li><router-link class="hierarchy_item" to="/smk/templates">Шаблоны документов</router-link></li>
         </ul>
     </div>
 </template>
@@ -18,6 +23,7 @@ export default {
         return {
             hierarchy: {
                 children: [
+
                     {
                         name: "Политика в области качества",
                         children: [
@@ -96,6 +102,19 @@ export default {
 .hierarchy_item {
     /* padding-top: 15px; */
     cursor: pointer;
+    /* padding: 10px 0 0 15px; */
+    
+    list-style-type: none;
+    color: black;
+    text-decoration: none;
+}
+
+li {
+    padding-top: 10px;
+}
+
+.hierarchy_item:hover {
+    text-decoration: underline;
 }
 
 .bold {
