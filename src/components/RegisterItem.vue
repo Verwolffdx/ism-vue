@@ -7,7 +7,10 @@
                     <span>&nbsp;</span>
                     <span v-html="document.title"></span>
                 </router-link>
-                <my-button @click="deleteDocument">Удалить</my-button>
+                <div>
+                    <!-- <my-button @click="deleteDocument">Удалить</my-button> -->
+                    <div @click="toFavorite" :class="{ favorite: isFavorite, nofavorite: !isFavorite }"></div>
+                </div>
             </div>
 
             <!-- <my-button class="document_content" v-for="find in document.find" v-html="find.item"></my-button> -->
@@ -54,6 +57,39 @@ export default {
             } catch (e) {
                 console.log(e)
             }
+        },
+        async toFavorite() {
+            try {
+
+                let body = {
+                    document_id: this.document.id,
+                    user_id: auth.state.user.id
+                }
+
+
+                if (this.isFavorite) {
+                    const response = await axios.post('http://localhost:8080/api/v2/smk/deletefavorites', body, {
+                        headers: authHeader()
+                    })
+
+                    if (response.status == 200) {
+                        this.isFavorite = this.isFavorite ? false : true
+                        this.document.isFavorite = this.document.isFavorite ? false : true
+                    }
+                } else {
+                    const response = await axios.post('http://localhost:8080/api/v2/smk/addfavorites', body, {
+                        headers: authHeader()
+                    })
+
+                    if (response.status == 200) {
+                        this.isFavorite = this.isFavorite ? false : true
+                        this.document.isFavorite = this.document.isFavorite ? false : true
+                    }
+                }
+
+            } catch (e) {
+                console.log(e)
+            }
         }
     }
 }
@@ -69,7 +105,23 @@ export default {
     background-repeat: no-repeat;
 }
 
+.nofavorite {
+    background: url("@/../public/nofavorite.png");
+    background-size: contain;
+    height: 25px;
+    min-width: 25px;
+    cursor: pointer;
+    background-repeat: no-repeat;
+}
 
+.favorite {
+    background: url("@/../public/favorite.png");
+    background-size: contain;
+    min-width: 25px;
+    height: 25px;
+    cursor: pointer;
+    background-repeat: no-repeat;
+}
 
 .document {
     padding: 10px 0;

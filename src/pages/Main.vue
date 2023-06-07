@@ -4,19 +4,9 @@
 
         <div class="workArea font-normal">
             <div class="hierarchy">
-                
                 <hierarchy></hierarchy>
-                
                 <hr>
-                <!-- Добавление документа (из видео) -->
-                <!-- <my-button @click="showDialog">Создать документ</my-button>
-                <my-dialog v-model:show="dialogVisible">
-                    <document-form @create="createDocument" />
-                </my-dialog> -->
-
             </div>
-            <!-- :model-value="searchValue"
-                        @update:model-value="setSearchValue(searchValue)" -->
             <div class="searchArea">
                 <div class="searchBar">
                     <input class="searchInput" type="text" placeholder="Поиск..." v-model="searchValue"
@@ -124,7 +114,7 @@ export default {
         }
     },
     methods: {
-        
+
         ...mapMutations({
             setSearchValue: 'document/setSearchValue'
         }),
@@ -147,58 +137,6 @@ export default {
         showDialog() {
             this.dialogVisible = true
         },
-        // async fetchDocuments() {
-        //     try {
-        //         this.isSearched = false
-        //         this.documents = []
-        //         this.documentsLoading = true
-
-
-        //         const response = await axios.get('http://localhost:8080/api/smk/find?field=content&value=' + this.searchValue)
-
-        //         if (response.status === 200) {
-        //             this.isSearched = true
-
-
-        //             response.data.forEach(e => {
-        //                 let id = e.content.id
-        //                 let code = e.content.code
-        //                 if (e.highlightFields?.code) {
-        //                     code = e.highlightFields.code[0]
-        //                 }
-        //                 let title = e.content.name
-        //                 if (e.highlightFields?.name) {
-        //                     title = e.highlightFields.name[0]
-        //                 }
-        //                 let find = []
-        //                 if (e.highlightFields?.appendix) {
-        //                     e.highlightFields.appendix.forEach(appendix => find.push(appendix))
-        //                 }
-
-        //                 if (e.highlightFields?.content) {
-        //                     e.highlightFields.content.forEach(content => find.push(content))
-        //                 }
-        //                 this.documents.push({
-        //                     id,
-        //                     code,
-        //                     title,
-        //                     find
-        //                 })
-
-
-
-        //             })
-
-        //             this.numOfResults = this.documents.length
-        //             this.documentsLoading = false
-        //         }
-        //     } catch (e) {
-        //         alert(e)
-        //         console.log(e)
-        //         this.documentsLoading = false
-        //     }
-        // }
-
     }
 }
 </script>
@@ -216,6 +154,8 @@ export default {
 .workArea {
     display: flex;
     flex-direction: row;
+    /* min-height: 100%; */
+
 }
 
 .hierarchy {
@@ -223,8 +163,7 @@ export default {
     flex-direction: column;
     min-width: 250px;
     width: 15%;
-    /* border: 1px solid black; */
-    padding: 15px 35px;
+    padding: 10px 10px;
 }
 
 

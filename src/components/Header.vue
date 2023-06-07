@@ -4,13 +4,14 @@
         <div>
             <router-link class="logo" to="/smk">ИСМ ЛГТУ</router-link>
         </div>
-        <div class="profile" @click="toggle">
+        <div class="profile" @click="toggle" v-if="this.isAuth.state.user != null">
             <img class="user_icon" src="@/../public/user.png" alt="">
             <div class="user_name"> {{ this.username }}</div>
             <p :class="{ menu_btn_open: this.dropdownOpen }" class="menu_btn_close"></p>
             <div v-if="this.dropdownOpen" class="menu">
                 <div class="menu-item" @click="toFav">Избранное</div>
-                <div class="menu-item" v-show="isAdmin" @click="this.$router.push('/admin')">Панель администирования</div>
+                <div class="menu-item" v-show="isAdmin" @click="this.$router.push('/smk/create')">Создание документа</div>
+                <div class="menu-item" v-show="isAdmin" @click="this.$router.push('/smk/register')">Регистрация пользователя</div>
                 <div class="menu-item" @click.prevent="logOut">Выход</div>
             </div>
         </div>
@@ -23,13 +24,19 @@ export default {
     name: "header-item",
     data() {
         return {
-            isAdmin: auth.state.user.roles.includes('ROLE_ADMIN'),
-            username: auth.state.user.fio,
-            dropdownOpen: false
+            isAdmin: "",
+            username: "",
+            dropdownOpen: "",
+            isAuth: auth
         }
     },
     mounted() {
-        console.log(auth.state.user.fio)
+        // console.log(auth.state.user.fio)
+        if (this.isAuth.state.user != null) {
+            this.isAdmin = auth.state.user.roles.includes('ROLE_ADMIN'),
+            this.username = auth.state.user.fio,
+            this.dropdownOpen = false
+        }
     },
     methods: {
         logOut() {
@@ -51,7 +58,7 @@ export default {
     position: absolute;
     top: 0;
     right: 0;
-    border: 0.5px solid black;
+    border: 0.5px solid gainsboro;
     margin-top: 60px;
     margin-right: 30px;
     background-color: white;
@@ -65,13 +72,13 @@ export default {
 }
 
 .menu-item:hover {
-    background-color: whitesmoke;
+    background-color: #B6CFF1;
 }
 
 .menu_btn_close {
     height: 10px;
     width: 10px;
-    border: solid gray;
+    border: solid #B6CFF1;
     border-width: 0 3px 3px 0;
     display: inline-block;
     padding: 3px;
@@ -81,11 +88,11 @@ export default {
 }
 
 .menu_btn_open {
-    border-color: black;
+    border-color: gray;
 }
 
 .menu_btn_close:hover {
-    border-color: black;
+    border-color: gray;
 }
 
 .logo {
@@ -94,9 +101,9 @@ export default {
     line-height: 24px;
     margin-left: 35px;
     font-style: bold;
-    color: black;
     text-decoration: none;
     margin-right: 30px;
+    color: #EEF5EE;
 }
 
 .header {
@@ -107,6 +114,7 @@ export default {
     height: 70px;
     border-bottom: 1px solid black;
     min-width: 100%;
+    background-color: #284469;
 }
 
 .profile {
@@ -116,7 +124,7 @@ export default {
     align-items: center;
     margin-right: 15px;
     max-width: 25%;
-
+    
     cursor: pointer;
 }
 
@@ -127,6 +135,6 @@ export default {
 .user_name {
     margin: 0 10px;
     font-size: 16px;
-
+    color: #EEF5EE;
 }
 </style>

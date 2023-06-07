@@ -36,13 +36,12 @@
             </div>
             <div class="documentArea">
                 <div class="buttons">
-                    <my-button @click="this.$router.push('/admin/edit/' + document.id)">Редактировать</my-button>
+                    
                     <my-button @click="getDocumentFile(this.$route.params.id)">Скачать оригинал</my-button>
-
                     <my-button v-if="!this.isFavorite" @click="toFavorite">Добавить избранное</my-button>
-
                     <my-button v-if="this.isFavorite" @click="toFavorite">Удалить из избранного</my-button>
-
+                    <my-button v-if="this.isAdmin" @click="this.$router.push('/admin/edit/' + document.id)">Редактировать</my-button>
+                    <my-button v-if="this.isAdmin" @click="deleteDocument">Удалить</my-button>
 
                 </div>
                 <div class="title_list">
@@ -114,6 +113,7 @@ export default {
             loading: true,
             isFamiliarize: false,
             isFavorite: false,
+            isAdmin: false
         }
     },
     beforeMount() {
@@ -129,6 +129,7 @@ export default {
         // this.getDocumentById()
 
         // this.isFamiliarize = this.document.isFamiliarize
+        this.isAdmin = auth.state.user.roles.includes('ROLE_ADMIN')
 
     },
     watch: {
@@ -141,6 +142,20 @@ export default {
         }
     },
     methods: {
+        async deleteDocument() {
+            try {
+                const response = await axios.delete('http://localhost:8080/api/v2/smk/deleteDocument?id=' + this.document.id, {
+                    headers: authHeader()
+                })
+
+                if (response.status == 200) {
+                    console.log(response)
+                    this.$router.go(-1)
+                }
+            } catch (e) {
+                console.log(e)
+            }
+        },
         scroll(id) {
             const el = document.getElementById(id);
             if (el) {
@@ -291,8 +306,7 @@ export default {
     flex-direction: column;
     min-width: 250px;
     width: 15%;
-    /* border: 1px solid black; */
-    padding: 15px 35px;
+    padding: 15px 15px;
 }
 
 .hierarchy_item {

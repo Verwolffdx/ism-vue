@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="hierarchy">
         <ul>
             <li><router-link class="hierarchy_item" to="/smk/documents/standarts">Стандарты организации</router-link></li>
             <li><router-link class="hierarchy_item" to="/smk/documents/regulations">Положения общеуниверситетские</router-link></li>
@@ -128,4 +128,5 @@ ul {
     margin: 0.75em 0;
     padding: 0 1em;
 }
+
 </style>

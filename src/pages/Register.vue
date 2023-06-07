@@ -1,10 +1,10 @@
 <template>
   <header-item></header-item>
   <div class="workArea font-normal">
-    <!-- <div class="hierarchy">
-    <hierarchy></hierarchy>
-    </div> -->
-    <admin-panel></admin-panel>
+    <div class="hierarchy">
+      <hierarchy></hierarchy>
+      <hr>
+    </div>
     <div class="register-page">
       <span class="createTitle">Регистрация пользователя</span>
       <hr>
@@ -197,8 +197,7 @@ export default {
   flex-direction: column;
   min-width: 250px;
   width: 15%;
-  /* border: 1px solid black; */
-  padding: 15px 35px;
+  padding: 10px 10px;
 }
 
 .hierarchy_item {
@@ -220,9 +219,9 @@ hr {
 }
 
 .createTitle {
-  font-weight: 500;
-  font-size: 20px;
-  line-height: 20px;
+  font-weight: 400;
+  font-size: 22px;
+  margin-top: 10px;
 }
 
 .register-page {

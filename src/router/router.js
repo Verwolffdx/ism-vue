@@ -35,7 +35,7 @@ const routes = [
         meta: { requiresAuth: true }
     },
     {
-        path: '/admin/create',
+        path: '/smk/create',
         component: CreateDocumentPage,
         meta: { requiresAuth: true },
         beforeEnter(to, from, next) {
@@ -64,7 +64,7 @@ const routes = [
         meta: { requiresAuth: false }
     },
     {
-        path: "/admin/register",
+        path: "/smk/register",
         component: RegisterComponent,
         meta: { requiresAuth: false },
         beforeEnter(to, from, next) {

@@ -84,8 +84,7 @@ export default {
     flex-direction: column;
     min-width: 250px;
     width: 15%;
-    /* border: 1px solid black; */
-    padding: 15px 35px;
+    padding: 10px 10px;
 }
 
 .searchArea {

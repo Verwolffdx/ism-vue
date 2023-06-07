@@ -1,43 +1,42 @@
 <template>
-    <div class="auth-page">
+    <div>
+        <header-item></header-item>
+        <div class="auth-page">
+            <Form @submit="handleLogin" :validation-schema="schema" class="form">
+                <div class="form-group">
+                    <label for="username">Логин</label>
+                    <Field name="login" as="my-input">
+                        <!-- <input name="login" type="text" class="input" placeholder="Введите логин"> -->
+                    </Field>
+                    <ErrorMessage name="login" class="error-feedback" />
+                </div>
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <Field name="password" type="password" as="my-input">
+                        <!-- <input name="password" type="password" class="input" placeholder="Введите пароль"> -->
+                    </Field>
+                    <ErrorMessage name="password" class="error-feedback" />
+                </div>
 
-        
-
-        <Form @submit="handleLogin" :validation-schema="schema" class="form">
-            <div class="form-group">
-                <label for="username">Логин</label>
-                <Field name="login" as="my-input">
-                    <!-- <input name="login" type="text" class="input" placeholder="Введите логин"> -->
-                </Field>
-                <ErrorMessage name="login" class="error-feedback" />
-            </div>
-            <div class="form-group">
-                <label for="password">Пароль</label>
-                <Field name="password" type="password" as="my-input">
-                    <!-- <input name="password" type="password" class="input" placeholder="Введите пароль"> -->
-                </Field>
-                <ErrorMessage name="password" class="error-feedback" />
-            </div>
-
-            <!-- <div >
+                <!-- <div >
                 <button class="btn" :disabled="loading">
                     <span v-show="loading" class="spinner">Загрузка</span>
                     <span>Войти</span>
                 </button>
             </div> -->
 
-            <my-button :disabled="loading">Войти</my-button>
-            <span v-show="loading" class="spinner">Загрузка</span>
+                <my-button :disabled="loading">Войти</my-button>
+                <span v-show="loading" class="spinner">Загрузка</span>
 
-            <div class="form-group">
-                <div v-if="message" class="alert alert-danger" role="alert">
-                    {{ message }}
+                <div class="form-group">
+                    <div v-if="message" class="alert alert-danger" role="alert">
+                        {{ message }}
+                    </div>
                 </div>
-            </div>
-        </Form>
+            </Form>
 
-        <!-- Без vee-validate -->
-        <!-- <form @submit="handleLogin">
+            <!-- Без vee-validate -->
+            <!-- <form @submit="handleLogin">
                 <div class="form-group">
                     <label for="login">Логин</label>
                     <input v-model="user.login" name="login" type="text" class="form-control" />
@@ -63,7 +62,7 @@
                 </div>
             </form> -->
 
-
+        </div>
     </div>
 </template>
 
@@ -119,7 +118,7 @@ export default {
                         case 401:
                             this.message = "Неверный логин или пароль"
                             break;
-                    
+
                         default:
                             this.message = "Ошибка авторизации"
                             break;
@@ -145,11 +144,12 @@ export default {
     align-items: center;
     min-height: 100vh;
 }
+
 .form {
-   display: flex;
-   flex-direction: column;
-   align-items: center;
-   width: 20%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 20%;
 }
 
 .form-group {

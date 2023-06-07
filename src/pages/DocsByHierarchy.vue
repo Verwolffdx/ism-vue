@@ -109,20 +109,19 @@ export default {
 .pageTitle {
     font-weight: 400;
     font-size: 22px;
+    margin-top: 10px;
 }
 
 .workArea {
     display: flex;
     flex-direction: row;
 }
-
 .hierarchy {
     display: flex;
     flex-direction: column;
     min-width: 250px;
     width: 15%;
-    /* border: 1px solid black; */
-    padding: 15px 35px;
+    padding: 10px 10px;
 }
 
 .searchArea {

@@ -59,9 +59,14 @@ export const documentModule = {
             try {
                 commit('setSearched', false)
                 commit('setLoading', true)
+
+                let body = {
+                    search_value: searchValue,
+                    user_id: auth.state.user.id,
+                }
                 
                 
-                const response = await axios.get('http://localhost:8080/api/v2/smk/findtemplates/' + searchValue,
+                const response = await axios.post('http://localhost:8080/api/v2/smk/findtemplates', body ,
                     {
                         headers: authHeader()
                     })
@@ -152,7 +157,7 @@ export const documentModule = {
 
                     // console.log(title)
 
-
+                    
                     const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/msword' }))
                     const link = document.createElement('a')
                     link.href = url
@@ -165,6 +170,9 @@ export const documentModule = {
                     document.body.appendChild(link)
                     link.click()
                 }
+
+                if (response.status == 204)
+                    alert("Файл отсутствует")
             } catch (e) {
                 alert(e)
                 console.log(e)

@@ -1,12 +1,18 @@
 <template>
     <div>
         <header-item></header-item>
+
         <div class="workArea font-normal">
             <!-- <div class="hierarchy">
                 <hierarchy></hierarchy>
                 <hr>
             </div> -->
-            <admin-panel></admin-panel>
+
+            <div class="hierarchy">
+                <hierarchy></hierarchy>
+                <hr>
+            </div>
+
             <div class="createArea">
                 <span class="createTitle">Создать документ</span>
 
@@ -60,7 +66,7 @@
                         v-model:input-value="appendix.appendix">
                         Приложение:
                         <template v-slot:template>
-                            
+
                             <div class="field">
                                 <span class="input_title">Загрузить файл приложения</span>
                                 <input type="file" ref="template">
@@ -342,7 +348,7 @@ export default {
                     templates.push(item.files[0])
                 })
 
-                
+
 
                 let formData = new FormData();
 
@@ -362,7 +368,7 @@ export default {
                     }),
                     originalFile.name
                 );
-                
+
 
                 // let blobArray = []
                 // templates.forEach(item => {
@@ -378,15 +384,15 @@ export default {
 
                 this.$refs.template.forEach(item => {
                     formData.append(
-                    'templates',
-                    new Blob([item.files[0]], {
-                        type: "multipart/form-data"
-                    }),
-                    item.files[0].name
-                );
+                        'templates',
+                        new Blob([item.files[0]], {
+                            type: "multipart/form-data"
+                        }),
+                        item.files[0].name
+                    );
                 })
 
-                
+
 
 
 
@@ -511,9 +517,9 @@ export default {
 }
 
 .createTitle {
-    font-weight: 500;
-    font-size: 20px;
-    line-height: 20px;
+    font-weight: 400;
+    font-size: 22px;
+    margin-top: 10px;
 }
 
 .workArea {
@@ -526,7 +532,7 @@ export default {
     flex-direction: column;
     min-width: 250px;
     width: 15%;
-    padding: 15px 35px;
+    padding: 10px 10px;
 }
 
 .createArea {
