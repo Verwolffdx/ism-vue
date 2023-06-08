@@ -2,14 +2,14 @@
     <div id="item-template">
         <li>
             <div :class="{ li_folder: isFolder }" @click="toggle"></div>
-            <input type="checkbox" :id="item.id" @change="$emit('addDivision', item)">
+            <input type="checkbox" :id="item.division_id" @change="$emit('addDivision', item)" :checked="divisions?.includes(item.division_id)">
             <label for="checkbox" @click="toggle">{{ item.division_name }}</label>
             <!-- <div :class="{ bold: isFolder }">
                 {{ item.name }}
                 <span v-if="isFolder">[{{ isOpen ? '-' : '+' }}]</span>
             </div> -->
             <ul v-show="isOpen" v-if="isFolder">
-                <div-tree-item class="subitem" v-for="(child, index) in item.children" :key="index"
+                <div-tree-item :divisions=divisions class="subitem" v-for="(child, index) in item.children" :key="index"
                     :item="child" @addDivision=addDivision></div-tree-item>
             </ul>
         </li>
@@ -20,7 +20,7 @@ export default {
     name: "div-tree-item",
     props: {
         item: Object,
-        modelValue: [Array]
+        divisions: [Array]
     },
     data: function () {
         return {

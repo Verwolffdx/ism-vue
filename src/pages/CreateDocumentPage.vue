@@ -392,10 +392,6 @@ export default {
                     );
                 })
 
-
-
-
-
                 const response = await axios.post('http://localhost:8080/api/v2/smk/create',
                     formData,
                     { headers: fileHeader() }

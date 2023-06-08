@@ -101,7 +101,7 @@
 
                     <span class="input_title">Лист ознакомления (отделы:)</span>
                     <div class="field">
-                        <divisions-tree v-model="divisionsArray" @addDivision=addDivision></divisions-tree>
+                        <divisions-tree v-model:divisions=divisions @addDivision=addDivision() ></divisions-tree>
                     </div>
 
                     <hr>
@@ -138,7 +138,7 @@ export default {
     // },
     data() {
         return {
-            divisionsArray: [1, 2, 3],
+            divisionsArray: [19, 20, 21, 31],
             showModal: false,
             //Количество глав
             count_chapter: 0,
@@ -186,7 +186,7 @@ export default {
     mounted() {
         // this.addChapter()
         if (this.documentFull != null) {
-            
+            this.getDivisionsForDocument(this.documentFull.id)
 
             this.document.name = this.documentFull.title
             this.document.code = this.documentFull.code
@@ -217,19 +217,23 @@ export default {
 
             this.document.approval_sheet = this.documentFull.approval_sheet
             this.document.links = this.documentFull.links
+
+            this.divisionsArray = this.divisions
         }
     },
     computed: {
         ...mapGetters({
             // document: 'document/getDocumentById'
-            documentFull: 'document/getDocument'
+            documentFull: 'document/getDocument',
+            divisions: 'document/getDivisions'
         })
 
     },
     methods: {
         ...mapActions({
             getDocumentByIdWithHighlight: 'document/getDocumentByIdWithHighlight',
-            getDocumentFile: 'document/getDocumentFile'
+            getDocumentFile: 'document/getDocumentFile',
+            getDivisionsForDocument: 'document/getDivisionsForDocument'
         }),
         addDivision(item) {
             if (this.divisionsArray.includes(item.id)) {

@@ -11,7 +11,8 @@ export const documentModule = {
         documentsLoading: false,
         document: null,
         familiarizationSheetForUser: [],
-        templates: []
+        templates: [],
+        divisions: []
     }),
     getters: {
         getDocumentById: (state) => (id) => {
@@ -22,6 +23,9 @@ export const documentModule = {
         },
         getFamiliarizationSheetForUser: (state) => {
             return state.familiarizationSheetForUser
+        },
+        getDivisions: (state) => {
+            return state.divisions
         }
     },
     mutations: {
@@ -52,9 +56,30 @@ export const documentModule = {
         },
         setTemplates(state, templates) {
             state.templates = templates
+        },
+        setDivisions(state, divisions) {
+            state.divisions = divisions
         }
     },
     actions: {
+        async getDivisionsForDocument({ state, commit }, doc_id) {
+            try {
+                const response = await axios.get('http://localhost:8080/api/v2/smk/document/' + doc_id + '/divisions',
+                    {
+                        headers: authHeader()
+                    }
+                )
+
+                if (response.status == 200) {
+                    console.log(response.data)
+                    commit('setDivisions', response.data)
+                    console.log(state.divisions[0])
+                }
+            } catch(e) {
+                alert(e)
+                system.log(e)
+            }
+        },
         async searchTemplates({ state, commit }, searchValue) {
             try {
                 commit('setSearched', false)

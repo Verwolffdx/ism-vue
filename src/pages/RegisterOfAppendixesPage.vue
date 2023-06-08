@@ -18,7 +18,7 @@
             <!-- :model-value="searchValue"
                         @update:model-value="setSearchValue(searchValue)" -->
             <div class="searchArea">
-                <p class="pageTitle">Избранное</p>
+                <p class="pageTitle">Шаблоны документов</p>
                 <div class="searchBar">
                     <input class="searchInput" type="text" placeholder="Поиск..." v-model="this.templateSearch"
                         @keyup.enter="this.searchTemplates(this.templateSearch)">

@@ -3,7 +3,7 @@
         <ul id="demo" v-for="item in divisionsJSON.children" >
             <!-- <input type="checkbox" id="checkbox" @input="$emit('addDivision', item.id)">
             <label for="checkbox" :class="{ bold: isFolder }" @click="toggle">{{ item.name }}</label> -->
-            <div-tree-item class="hierarchy_item" :item="item" @addDivision=addDivision></div-tree-item>
+            <div-tree-item :divisions=divisions class="hierarchy_item" :item="item" @addDivision=addDivision></div-tree-item>
         </ul>
     </div>
 </template>
@@ -19,31 +19,31 @@ export default {
         'div-tree-item': DivTreeItem
     },
     props: {
-        divisionsArray: [Array]
+        divisions: [Array]
     },
     data() {
         return {
             DivisionsArray: [],
-            divisions: {
-                children: [
-                    {
-                        id: 3,
-                        name: "Ректор",
-                        children: [
-                            {
-                                id: 5,
-                                name: "Первый проректор",
-                            }
-                        ],
-                        isOpen: false
-                    },
-                    {
-                        id: 4,
-                        name: "Еще ректор",
-                    },
+            // divisions: {
+            //     children: [
+            //         {
+            //             id: 3,
+            //             name: "Ректор",
+            //             children: [
+            //                 {
+            //                     id: 5,
+            //                     name: "Первый проректор",
+            //                 }
+            //             ],
+            //             isOpen: false
+            //         },
+            //         {
+            //             id: 4,
+            //             name: "Еще ректор",
+            //         },
 
-                ]
-            },
+            //     ]
+            // },
             divisionsJSON: {
                 children: []
             }
