@@ -68,7 +68,7 @@ export default {
                     })
 
                 if (response.status == 200) {
-                    console.log(response)
+                    console.log(response.data)
                     // this.documents = []
                     response.data.forEach(item => {
                         

@@ -12,6 +12,7 @@
                 <div class="menu-item" @click="toFav">Избранное</div>
                 <div class="menu-item" v-show="isAdmin" @click="this.$router.push('/smk/create')">Создание документа</div>
                 <div class="menu-item" v-show="isAdmin" @click="this.$router.push('/smk/register')">Регистрация пользователя</div>
+                <div class="menu-item" v-show="isAdmin" @click="this.$router.push('/smk/report')">Лист ознакомления</div>
                 <div class="menu-item" @click.prevent="logOut">Выход</div>
             </div>
         </div>

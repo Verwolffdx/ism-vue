@@ -40,6 +40,7 @@
                     <my-button @click="getDocumentFile(this.$route.params.id)">Скачать оригинал</my-button>
                     <my-button v-if="!this.isFavorite" @click="toFavorite">Добавить избранное</my-button>
                     <my-button v-if="this.isFavorite" @click="toFavorite">Удалить из избранного</my-button>
+                    <my-button v-if="this.isAdmin" @click="this.$router.push('/smk/document/' + document.id +'/report/')">Лист ознакомления</my-button>
                     <my-button v-if="this.isAdmin" @click="this.$router.push('/admin/edit/' + document.id)">Редактировать</my-button>
                     <my-button v-if="this.isAdmin" @click="deleteDocument">Удалить</my-button>
 

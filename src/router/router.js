@@ -10,6 +10,8 @@ import FavoritesPage from '@/pages/FavoritesPage'
 import RegisterOfDocumentsPage from '@/pages/RegisterOfDocumentsPage'
 import RegisterOfAppendixesPage from '@/pages/RegisterOfAppendixesPage'
 import DocsByHierarchy from '@/pages/DocsByHierarchy'
+import FamReportGlobal from '@/pages/FamReportGlobal'
+import FamReportForDocument from '@/pages/FamReportForDocument'
 import { createRouter, createWebHistory } from "vue-router"
 import { auth } from '@/store/auth.module'
 
@@ -28,6 +30,23 @@ const routes = [
         path: '/smk/document/:id',
         component: DocumentPage,
         meta: { requiresAuth: true }
+    },
+    {
+        path: '/smk/document/:id/report',
+        component: FamReportForDocument,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/smk/report',
+        component: FamReportGlobal,
+        meta: { requiresAuth: true },
+        beforeEnter(to, from, next) {
+            if (!auth.state.user.roles.includes('ROLE_ADMIN')) {
+                next(from.path)
+            } else {
+                next()
+            }
+        }
     },
     {
         path: '/smk/favorites',
