@@ -26,7 +26,7 @@
                     <tr v-for="item in report.report" class="bordered">
                         <td>{{  item.divisionName }}</td>
                         <td>{{ item.fio }}</td>
-                        <td v-if="item.views">Ознакомился</td>
+                        <td v-if="item.viewed">Ознакомился</td>
                         <td v-else>Не ознакомился</td>
                     </tr>
                 </table>

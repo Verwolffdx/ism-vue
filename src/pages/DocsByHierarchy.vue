@@ -17,7 +17,7 @@
                 <register-list :documents="documents"></register-list>
             </div>
             <div class="famSheet" v-if="famSheet.length > 0">
-                <span>Ознакомьтесь с документами</span>
+                <span class="famTitle">Ознакомьтесь с документами</span>
                 <fam-list :famSheet="famSheet"></fam-list>
             </div>
 
@@ -110,6 +110,16 @@ export default {
     font-weight: 400;
     font-size: 22px;
     margin-top: 10px;
+}
+
+.famTitle {
+    font-weight: 400;
+    font-size: 22px;
+    margin-top: 10px;
+}
+
+.famSheet {
+    padding-top: 15px;
 }
 
 .workArea {

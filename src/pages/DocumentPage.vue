@@ -5,7 +5,9 @@
         <div v-if="!this.loading" class="workArea font-normal">
             <div class="hierarchy">
                 <!-- <hierarchy></hierarchy> -->
-                <my-button @click="scroll()" v-if="!this.isFamiliarize">Подтвердить ознакомление</my-button>
+                <div class="toFam">
+                    <my-button @click="scroll('familiarize')" v-if="!this.isFamiliarize" >Подтвердить ознакомление</my-button>
+                </div>
                 <div
                     v-show="typeof this.document.find != undefined && this.document.find != null && this.document.find.length != null && this.document.find.length > 1">
                     <strong>Найденные элементы</strong>
@@ -76,10 +78,10 @@
                     </div>
                 </div>
 
-                <div class="fam" ref="fam1" v-if="!this.isFamiliarize">
+                <div class="fam"  v-if="!this.isFamiliarize">
                     <!-- <input class="fam-input" type="checkbox"> -->
                     <!-- <label class="fam-label"></label> -->
-                    <my-button @click="this.showModal = true">Подтвердить ознакомление</my-button>
+                    <my-button id="familiarize" @click="this.showModal = true">Подтвердить ознакомление</my-button>
                 </div>
 
                 <!-- <div ref="7">ТЕСТ</div> -->
@@ -91,9 +93,10 @@
         <div v-else>Загрузка</div>
 
         <!-- Модальное окно -->
-        <my-modal v-if="showModal" @close="confirmFamiliarize()">
+        <my-modal v-if="showModal" @no="this.showModal=false" @ok="confirmFamiliarize()">
             <template v-slot:header>Вы ознакомились с документом?</template>
-            <template v-slot:footer>Да</template>
+            <template v-slot:footerOK>Да</template>
+            <template v-slot:footerNO>Нет</template>
         </my-modal>
     </div>
 </template>
@@ -159,6 +162,7 @@ export default {
         },
         scroll(id) {
             const el = document.getElementById(id);
+            console.log(id)
             if (el) {
                 el.scrollIntoView({ behavior: "smooth", block: "center" });
 
@@ -244,6 +248,10 @@ export default {
     display: flex;
     flex-direction: row;
     align-items: center;
+}
+
+.toFam {
+    padding-bottom: 10px;
 }
 
 .download {

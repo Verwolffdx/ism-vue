@@ -35,6 +35,16 @@
                         <my-input class="input" v-model="document.code"></my-input>
                     </div>
                     <div class="field">
+                        <span class="input_title">Тип:</span>
+                        <select class="input select" v-model="docType">
+                            <option disabled value="">Выберите один из вариантов</option>
+                            <option value="standarts">Стандарты организации</option>
+                            <option value="regulations">Положения общеуниверситетские</option>
+                            <option value="methodics">Инструкции</option>
+                            <option value="methrek">Методические рекомендации</option>
+                        </select>
+                    </div>
+                    <div class="field">
                         <span class="input_title">Версия:</span>
                         <my-input class="input" v-model="document.version"></my-input>
                     </div>
@@ -99,9 +109,17 @@
                     <hr>
                     <span class="input_title">Лист согласований</span>
                     <div v-for="approval in document.approval_sheet">
-                        <document-input :key="approval.id" v-model:input-value="approval.type_of_approval">
+                        <!-- <document-input :key="approval.id" v-model:input-value="approval.type_of_approval">
                             Согласовано/разработано:
-                        </document-input>
+                        </document-input> -->
+                        <div class="field">
+                            <span class="input_title">Тип:</span>
+                            <select class="input select" v-model="approval.type_of_approval">
+                                <option disabled value="">Выберите один из вариантов</option>
+                                <option>Согласовано</option>
+                                <option>Разработано</option>
+                            </select>
+                        </div>
                         <document-input :key="approval.id" v-model:input-value="approval.fio">
                             Кем:
                         </document-input>
@@ -154,45 +172,46 @@ export default {
     // },
     data() {
         return {
-            divisionsArray: [1, 2, 3],
+            divisionsArray: [],
             showModal: false,
             //Количество глав
             count_chapter: 0,
             tmpDocument: {},
             document_id: "",
+            docType: "",
             //Модель документа
             document: {
-                name: "Приложения 1",
-                code: "ПРИЛ-1",
-                version: "1",
-                date: "2023-05-29",
+                name: "",
+                code: "",
+                version: "",
+                date: "",
                 content: [
                     {
                         id: 0,
-                        chapter_title: "Глава 1",
-                        chapter: ["qwe123"]
+                        chapter_title: "",
+                        chapter: [""]
                     }
                 ],
                 appendix: [
                     {
                         id: 0,
-                        appendix: "Приложение А"
+                        appendix: ""
                     }
                 ],
                 links: [
                     {
                         id: 0,
-                        link_name: "Док 1",
-                        link: "/"
+                        link_name: "",
+                        link: ""
                     }
 
                 ],
                 approval_sheet: [
                     {
                         id: 0,
-                        type_of_approval: "Соглас",
-                        fio: "мной",
-                        position: "студент"
+                        type_of_approval: "",
+                        fio: "",
+                        position: ""
                     }
                 ]
             },
@@ -337,7 +356,8 @@ export default {
             try {
                 let body = {
                     document: this.document,
-                    divisions: this.divisionsArray
+                    divisions: this.divisionsArray,
+                    doctype: this.docType
                 }
 
                 let originalFile = this.$refs.original.files[0];
@@ -382,15 +402,17 @@ export default {
                 //     blobArray
                 // );
 
-                this.$refs.template.forEach(item => {
-                    formData.append(
-                        'templates',
-                        new Blob([item.files[0]], {
-                            type: "multipart/form-data"
-                        }),
-                        item.files[0].name
-                    );
-                })
+                if (this.$refs.template[0].files[0] != undefined && this.$refs.template[0].files[0] != null) {
+                    this.$refs.template.forEach(item => {
+                        formData.append(
+                            'templates',
+                            new Blob([item.files[0]], {
+                                type: "multipart/form-data"
+                            }),
+                            item.files[0].name
+                        );
+                    })
+                }
 
                 const response = await axios.post('http://localhost:8080/api/v2/smk/create',
                     formData,
@@ -562,6 +584,10 @@ hr {
 
 .input {
     width: 70%;
+}
+
+.select {
+    padding: 10px 10px;
 }
 
 .button {

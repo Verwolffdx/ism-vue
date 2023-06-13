@@ -17,9 +17,15 @@
 
                         <div class="modal-footer">
                             <!-- <slot name="footer"> -->
-                                <my-button class="modal-default-button" @click="$emit('close')">
-                                    <slot name="footer">
+                                <my-button class="modal-default-button" @click="$emit('ok')">
+                                    <slot name="footerOK">
                                         OK
+                                    </slot>
+                                    <!-- OK -->
+                                </my-button>
+                                <my-button class="modal-default-button" @click="$emit('no')">
+                                    <slot name="footerNO">
+                                        NO
                                     </slot>
                                     <!-- OK -->
                                 </my-button>
@@ -76,12 +82,15 @@ export default {
 
 .modal-footer {
     /* margin-bottom: 5px; */
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
     
 }
 
 .modal-default-button {
     /* float: right; */
-
+   
 }
 
 /*
@@ -106,4 +115,5 @@ export default {
     -webkit-transform: scale(1.1);
     transform: scale(1.1);
 }
+
 </style>
